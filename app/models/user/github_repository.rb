@@ -7,7 +7,6 @@ class User
     included do
     end
 
-    # GitHub 项目
     def github_repositories
       cache_key = github_repositories_cache_key
       items = Homeland.file_store.read(cache_key)
@@ -23,9 +22,9 @@ class User
     end
 
     def github_repos_path
-      return nil if self.github.blank?
+      return nil if github.blank?
       resource_name = organization? ? "orgs" : "users"
-      "/#{resource_name}/#{self.github}/repos?type=owner&sort=pushed"
+      "/#{resource_name}/#{github}/repos?type=owner&sort=pushed"
     end
 
     module ClassMethods
@@ -39,7 +38,7 @@ class User
             conn.basic_auth Setting.github_api_key, Setting.github_api_secret
           end
           resp = conn.get(user.github_repos_path)
-        rescue StandardError => e
+        rescue => e
           Rails.logger.error("GitHub Repositiory fetch Error: #{e}")
           Homeland.file_store.write(user.github_repositories_cache_key, [], expires_in: 1.minutes)
           return

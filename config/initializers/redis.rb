@@ -1,31 +1,27 @@
 # frozen_string_literal: true
 
-require "redis"
-require "redis-namespace"
-require "redis/objects"
-
 return if ENV["RAILS_PRECOMPILE"]
 
 redis_config = Rails.application.config_for(:redis)
 
-$redis = Redis.new(url: redis_config["url"], db: 0)
+Redis.current = Redis.new(url: redis_config["url"], db: 0)
 sidekiq_url = redis_config["url"]
-Redis::Objects.redis = $redis
 
+# Sidekiq require redis-namespace gem
+require "redis-namespace"
 Sidekiq.configure_server do |config|
-  config.redis = { namespace: "sidekiq", url: sidekiq_url, db: 0 }
+  config.redis = {namespace: "sidekiq", url: sidekiq_url, db: 0}
 end
 Sidekiq.configure_client do |config|
-  config.redis = { namespace: "sidekiq", url: sidekiq_url, db: 0 }
+  config.redis = {namespace: "sidekiq", url: sidekiq_url, db: 0}
 end
 
 if Sidekiq.server?
-  schedule_config = YAML.load(ERB.new(File.read("config/schedule.yml")).result)
+  schedule_config = YAML.safe_load(ERB.new(File.read("config/schedule.yml")).result)
   Sidekiq::Cron::Job.load_from_hash(schedule_config)
 end
 
-
-SecondLevelCache.configure.cache_key_prefix = "slc:2"
+SecondLevelCache.configure.cache_key_prefix = "slc:3"
 
 # FIXME: Upgrade redis-objects then remove this line.
 # `Redis#exists(key)` will return an Integer in redis-rb 4.3. `exists?` returns a boolean,

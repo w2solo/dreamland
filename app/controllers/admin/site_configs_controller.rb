@@ -11,17 +11,19 @@ module Admin
     end
 
     def update
-      if @site_config.value != setting_param[:value]
-        @site_config.value = setting_param[:value]
-        @site_config.save
+      if @site_config.value == setting_param[:value]
+        return redirect_to admin_site_configs_path
+      end
 
+      @site_config.value = setting_param[:value].strip
+      if @site_config.save
         if @site_config.require_restart?
           Setting.require_restart = true
         end
 
-        redirect_to admin_site_configs_path, notice: "保存成功."
+        redirect_to admin_site_configs_path, notice: "Update successfully."
       else
-        redirect_to admin_site_configs_path
+        render "edit"
       end
     end
 
@@ -31,8 +33,8 @@ module Admin
 
     private
 
-      def setting_param
-        params[:setting].permit!
-      end
+    def setting_param
+      params[:setting].permit!
+    end
   end
 end

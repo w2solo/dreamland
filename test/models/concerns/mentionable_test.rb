@@ -3,14 +3,6 @@
 require "test_helper"
 
 class MentionableTest < ActiveSupport::TestCase
-  ActiveRecord::Base.connection.create_table(:test_documents, force: true) do |t|
-    t.integer :user_id
-    t.integer :reply_to_id
-    t.integer :mentioned_user_ids, array: true, default: []
-    t.text :body
-    t.timestamps null: false
-  end
-
   class TestDocument < ApplicationRecord
     include Mentionable
 
@@ -39,9 +31,9 @@ class MentionableTest < ActiveSupport::TestCase
   end
 
   test "limtest 5 mentioned user" do
-    logins = "".dup
-    6.times { logins << " @#{create(:user).login}" }
-    doc = TestDocument.create body: logins, user: create(:user)
+    logins = []
+    6.times { logins << "@#{create(:user).login}" }
+    doc = TestDocument.create body: logins.join(" "), user: create(:user)
     assert_equal 5, doc.mentioned_user_ids.count
   end
 

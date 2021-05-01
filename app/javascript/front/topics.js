@@ -1,7 +1,9 @@
-// TopicsController 下所有页面的 JS 功能
+import i18n from "homeland/i18n";
+
+// TopicsController
 window.Topics = {
   topic_id: null,
-  user_liked_reply_ids: []
+  user_liked_reply_ids: [],
 };
 
 window.TopicView = Backbone.View.extend({
@@ -17,7 +19,6 @@ window.TopicView = Backbone.View.extend({
     "click a.bookmark": "bookmark",
     "click .btn-move-page": "scrollPage",
     "click .notify-updated .update": "updateReplies",
-    "click #node-selector .nodes .name a": "nodeSelectorNodeSelected",
     "click .editor-toolbar .reply-to a.close": "unsetReplyTo",
     "tap .topics .topic": "topicRowClick",
     "click .check-in": "checkIn"
@@ -29,7 +30,6 @@ window.TopicView = Backbone.View.extend({
     this.initComponents();
     this.initCableUpdate();
     this.initContentImageZoom();
-    this.initCloseWarning();
     this.checkRepliesLikeStatus();
     return this.itemsUpdated();
   },
@@ -42,14 +42,15 @@ window.TopicView = Backbone.View.extend({
 
   resetClearReplyHightTimer() {
     clearTimeout(this.clearHightTimer);
-    return this.clearHightTimer = setTimeout(() => $(".reply").removeClass("light")
-      , 10000);
+    return (this.clearHightTimer = setTimeout(
+      () => $(".reply").removeClass("light"),
+      10000
+    ));
   },
 
-  // 回复
   reply(e) {
     const _el = $(e.target);
-    const reply_to_id = _el.data('id');
+    const reply_to_id = _el.data("id");
     this.setReplyTo(reply_to_id);
     const reply_body = $("#new_reply textarea");
     reply_body.focus();
@@ -59,7 +60,7 @@ window.TopicView = Backbone.View.extend({
   setReplyTo(id) {
     $('input[name="reply[reply_to_id]"]').val(id);
     const replyEl = $(`.reply[data-id=${id}]`);
-    const targetAnchor = replyEl.attr('id');
+    const targetAnchor = replyEl.attr("id");
     const replyToPanel = $(".editor-toolbar .reply-to");
     const userNameEl = replyEl.find("a.user-name:first-child");
     const replyToLink = replyToPanel.find(".user");
@@ -69,7 +70,7 @@ window.TopicView = Backbone.View.extend({
   },
 
   unsetReplyTo() {
-    $('input[name="reply[reply_to_id]"]').val('');
+    $('input[name="reply[reply_to_id]"]').val("");
     const replyToPanel = $(".editor-toolbar .reply-to");
     replyToPanel.hide();
 
@@ -77,14 +78,11 @@ window.TopicView = Backbone.View.extend({
   },
 
   clickAtFloor(e) {
-    const floor = $(e.target).data('floor');
+    const floor = $(e.target).data("floor");
     return this.gotoFloor(floor);
   },
 
-  // 跳到指定楼。如果楼层在当前页，高亮该层，否则跳转到楼层所在页面并添
-  // 加楼层的 anchor。返回楼层 DOM Element 的 jQuery 对象
-  //
-  // -   floor: 回复的楼层数，从1开始
+  // go to replies floor
   gotoFloor(floor) {
     const replyEl = $(`#reply${floor}`);
 
@@ -93,15 +91,11 @@ window.TopicView = Backbone.View.extend({
     return replyEl;
   },
 
-  // 高亮指定楼。取消其它楼的高亮
-  //
-  // -   replyEl: 需要高亮的 DOM Element，须要 jQuery 对象
   highlightReply(replyEl) {
     $("#replies .reply").removeClass("light");
     return replyEl.addClass("light");
   },
 
-  // 异步更改用户 like 过的回复的 like 按钮的状态
   checkRepliesLikeStatus() {
     return (() => {
       const result = [];
@@ -113,44 +107,50 @@ window.TopicView = Backbone.View.extend({
     })();
   },
 
-  // Ajax 回复后的事件
   replyCallback(success, msg) {
-    if (msg === '') { return; }
+    if (msg === "") {
+      return;
+    }
     $("#main .alert-message").remove();
     if (success) {
       $("abbr.timeago", $("#replies .reply").last()).timeago();
       $("abbr.timeago", $("#replies .total")).timeago();
-      $("#new_reply textarea").val('');
-      $("#preview").text('');
-      App.notice(msg, '#reply');
+      $("#new_reply textarea").val("");
+      $("#preview").text("");
+      App.notice(msg, "#reply");
     } else {
-      App.alert(msg, '#reply');
+      App.alert(msg, "#reply");
     }
     $("#new_reply textarea").focus();
-    $('#reply-button').button('reset');
+    $("#reply-button").button("reset");
     this.resetClearReplyHightTimer();
     return this.unsetReplyTo();
   },
 
-  // 图片点击增加全屏预览功能
   initContentImageZoom() {
     const exceptClasses = ["emoji", "twemoji", "media-object avatar-16"];
     const imgEls = $(".markdown img");
     for (let el of Array.from(imgEls)) {
       if (exceptClasses.indexOf($(el).attr("class")) === -1) {
-        $(el).wrap(`<a href='${$(el).attr("src")}' class='zoom-image' data-action='zoom'></a>`);
+        $(el).wrap(
+          `<a href='${$(el).attr(
+            "src"
+          )}' class='zoom-image' data-action='zoom'></a>`
+        );
       }
     }
 
     // Bind click event
     if (App.turbolinks || App.mobile) {
-      $('a.zoom-image').attr("target", "_blank");
+      $("a.zoom-image").attr("target", "_blank");
     } else {
-      $('a.zoom-image').fluidbox({
-        closeTrigger: [{
-          selector: 'window',
-          event: 'scroll'
-        }]
+      $("a.zoom-image").fluidbox({
+        closeTrigger: [
+          {
+            selector: "window",
+            event: "scroll",
+          },
+        ],
       });
     }
     return true;
@@ -159,51 +159,37 @@ window.TopicView = Backbone.View.extend({
   preview(body) {
     $("#preview").text("Loading...");
 
-    return $.post("/topics/preview",
-      { "body": body },
-      data => $("#preview").html(data.body),
-      "json");
+    return $.post(
+      "/topics/preview",
+      { body: body },
+      (data) => $("#preview").html(data.body),
+      "json"
+    );
   },
 
   hookPreview(switcher, textarea) {
     // put div#preview after textarea
-    const self = this;
     const preview_box = $(document.createElement("div")).attr("id", "preview");
     preview_box.addClass("markdown form-control");
     $(textarea).after(preview_box);
     preview_box.hide();
 
-    return $(".preview", switcher).click(function () {
-      if ($(this).hasClass("active")) {
-        $(this).removeClass("active");
-        $(preview_box).hide();
+    return $(".preview", switcher).click((e) => {
+      e.preventDefault();
+      const target = e.currentTarget;
+
+      if ($(target).hasClass("active")) {
+        $(target).removeClass("active");
+        preview_box.hide();
         $(textarea).show();
       } else {
-        $(this).addClass("active");
-        $box = $(preview_box)
-        $box.show();
+        $(target).addClass("active");
         $(textarea).hide();
-        $box.css("height", "auto");
-        $box.css("min-height", $(textarea).height());
-        self.preview($(textarea).val());
-      }
-      return false;
-    });
-  },
-
-  initCloseWarning() {
-    let msg;
-    const text = $("textarea.closewarning");
-    if (text.length === 0) { return false; }
-    if (!msg) { msg = "离开本页面将丢失未保存页面!"; }
-    $("input[type=submit]").click(() => $(window).unbind("beforeunload"));
-    return text.change(function () {
-      if (text.val().length > 0) {
-        return $(window).bind("beforeunload", function (e) {
-          return msg;
-        });
-      } else {
-        return $(window).unbind("beforeunload");
+        preview_box
+          .show()
+          .css("height", "auto")
+          .css("min-height", $(textarea).height());
+        this.preview($(textarea).val());
       }
     });
   },
@@ -216,12 +202,12 @@ window.TopicView = Backbone.View.extend({
     if (link.hasClass("active")) {
       $.ajax({
         url: `/topics/${topic_id}/unfavorite`,
-        type: "DELETE"
+        type: "DELETE",
       });
-      link.attr("title", "收藏").removeClass("active");
+      link.attr("title", i18n.t("common.favorite")).removeClass("active");
     } else {
       $.post(`/topics/${topic_id}/favorite`);
-      link.attr("title", "取消收藏").addClass("active");
+      link.attr("title", i18n.t("common.unfavorite")).addClass("active");
     }
     return false;
   },
@@ -234,13 +220,13 @@ window.TopicView = Backbone.View.extend({
     if (link.hasClass("active")) {
       $.ajax({
         url: `/topics/${topic_id}/unfollow`,
-        type: "DELETE"
+        type: "DELETE",
       });
       link.removeClass("active");
     } else {
       $.ajax({
         url: `/topics/${topic_id}/follow`,
-        type: "POST"
+        type: "POST",
       });
       link.addClass("active");
     }
@@ -258,11 +244,10 @@ window.TopicView = Backbone.View.extend({
 
   scrollPage(e) {
     const target = $(e.currentTarget);
-    const moveType = target.data('type');
-    const opts =
-      { scrollTop: 0 };
-    if (moveType === 'bottom') {
-      opts.scrollTop = $('body').height();
+    const moveType = target.data("type");
+    const opts = { scrollTop: 0 };
+    if (moveType === "bottom") {
+      opts.scrollTop = $("body").height();
     }
     $("body, html").animate(opts, 300);
     return false;
@@ -270,12 +255,12 @@ window.TopicView = Backbone.View.extend({
 
   initComponents() {
     $("textarea.topic-editor").unbind("keydown.cr");
-    $("textarea.topic-editor").bind("keydown.cr", "ctrl+return", el => {
+    $("textarea.topic-editor").bind("keydown.cr", "ctrl+return", (el) => {
       return this.submitTextArea(el);
     });
 
     $("textarea.topic-editor").unbind("keydown.mr");
-    $("textarea.topic-editor").bind("keydown.mr", "Meta+return", el => {
+    $("textarea.topic-editor").bind("keydown.mr", "Meta+return", (el) => {
       return this.submitTextArea(el);
     });
 
@@ -287,11 +272,13 @@ window.TopicView = Backbone.View.extend({
 
     this.hookPreview($(".editor-toolbar"), $(".topic-editor"));
 
-    $("body").bind("keydown", "m", el => $('#markdown_help_tip_modal').modal({
-      keyboard: true,
-      backdrop: true,
-      show: true
-    }));
+    $("body").bind("keydown", "m", (el) =>
+      $("#markdown_help_tip_modal").modal({
+        keyboard: true,
+        backdrop: true,
+        show: true,
+      })
+    );
 
     // @ Mention complete
     App.mentionable("textarea", App.scanMentionableLogins($(".reply")));
@@ -300,7 +287,7 @@ window.TopicView = Backbone.View.extend({
     $("body[data-controller-name='topics'] #topic_title").focus();
 
     // init editor toolbar
-    return window._editor = new Editor();
+    return (window._editor = new Editor());
   },
 
   initCableUpdate() {
@@ -315,33 +302,39 @@ window.TopicView = Backbone.View.extend({
     }
 
     if (!window.repliesChannel) {
-      return window.repliesChannel = App.cable.subscriptions.create('RepliesChannel', {
-        topicId: null,
+      return (window.repliesChannel = App.cable.subscriptions.create(
+        "RepliesChannel",
+        {
+          topicId: null,
 
-        connected() {
-          return this.subscribe();
-        },
+          connected() {
+            return this.subscribe();
+          },
 
-        received: json => {
-          if (json.user_id === App.current_user_id) { return false; }
-          if (json.action !== 'create') { return false; }
-          if (App.windowInActive) {
-            return this.updateReplies();
-          } else {
-            return $(".notify-updated").show();
-          }
-        },
+          received: (json) => {
+            if (json.user_id === App.current_user_id) {
+              return false;
+            }
+            if (json.action !== "create") {
+              return false;
+            }
+            if (App.windowInActive) {
+              return this.updateReplies();
+            } else {
+              return $(".notify-updated").show();
+            }
+          },
 
-        subscribe() {
-          this.topicId = Topics.topic_id;
-          return this.perform('follow', { topic_id: Topics.topic_id });
-        },
+          subscribe() {
+            this.topicId = Topics.topic_id;
+            return this.perform("follow", { topic_id: Topics.topic_id });
+          },
 
-        unfollow() {
-          return this.perform('unfollow');
+          unfollow() {
+            return this.perform("unfollow");
+          },
         }
-      }
-      );
+      ));
     } else if (window.repliesChannel.topicId !== Topics.topic_id) {
       window.repliesChannel.unfollow();
       return window.repliesChannel.subscribe();
@@ -349,7 +342,7 @@ window.TopicView = Backbone.View.extend({
   },
 
   updateReplies() {
-    const lastId = $("#replies .reply:last").data('id');
+    const lastId = $("#replies .reply:last").data("id");
     if (!lastId) {
       Turbolinks.visit(location.href);
       return false;
@@ -359,21 +352,6 @@ window.TopicView = Backbone.View.extend({
       return $("#new_reply textarea").focus();
     });
     return false;
-  },
-
-  nodeSelectorNodeSelected(e) {
-    const el = $(e.currentTarget);
-    $("#node-selector").modal('hide');
-    $('form input[name="topic[title]"]').focus();
-    if ($('form input[name="topic[node_id]"]').length > 0) {
-      e.preventDefault();
-      const nodeId = el.data('id');
-      $('form input[name="topic[node_id]"]').val(nodeId);
-      $('#node-selector-button').html(el.text());
-      return false;
-    } else {
-      return true;
-    }
   },
 
   topicRowClick(e) {
@@ -390,16 +368,16 @@ window.TopicView = Backbone.View.extend({
 
     e.preventDefault();
 
-    $(e.currentTarget).addClass('topic-visited');
-    Turbolinks.visit(target.attr('href'));
+    $(e.currentTarget).addClass("topic-visited");
+    Turbolinks.visit(target.attr("href"));
     return false;
   },
 
   loadReplyToFloor() {
-    return _.each($(".reply-to-block"), el => {
-      const replyToId = $(el).data('reply-to-id');
-      const floor = $(`#reply-${replyToId}`).data('floor');
-      return $(el).find('.reply-floor').text(`\#${floor}`);
+    return _.each($(".reply-to-block"), (el) => {
+      const replyToId = $(el).data("reply-to-id");
+      const floor = $(`#reply-${replyToId}`).data("floor");
+      return $(el).find(".reply-floor").text(`\#${floor}`);
     });
   },
 

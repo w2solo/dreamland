@@ -22,11 +22,9 @@ module Homeland
 
     # The default locale is :en and all translations from config/locales/*.rb,yml are auto loaded.
     config.i18n.load_path += Dir[Rails.root.join("plugins", "*/locales", "*.{rb,yml}").to_s]
-    config.i18n.default_locale = "zh-CN"
-    config.i18n.available_locales = ["zh-CN", "en", "zh-TW"]
-
-    # Do not swallow errors in after_commit/after_rollback callbacks.
+    config.i18n.default_locale = "en"
     config.i18n.fallbacks = true
+    config.i18n.available_locales = ["en", "zh-CN"]
 
     config.autoload_paths += [
       Rails.root.join("lib")
@@ -48,11 +46,13 @@ module Homeland
     end
 
     redis_config = Application.config_for(:redis)
-    config.cache_store = [:redis_cache_store, { namespace: "cache", url: redis_config["url"], expires_in: 4.weeks }]
+    config.cache_store = [:redis_cache_store, {namespace: "cache", url: redis_config["url"], expires_in: 4.weeks}]
 
     config.active_job.queue_adapter = :sidekiq
     config.middleware.use Rack::Attack
+
     config.action_cable.mount_path = "/cable"
+    config.action_cable.logger = Logger.new("/dev/null")
   end
 end
 

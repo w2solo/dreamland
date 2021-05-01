@@ -3,13 +3,6 @@
 require "spec_helper"
 
 class SoftDeleteTest < ActiveSupport::TestCase
-  ActiveRecord::Base.connection.create_table(:walking_deads, force: true) do |t|
-    t.string :name
-    t.string :tag
-    t.datetime :deleted_at
-    t.timestamps null: false
-  end
-
   class WalkingDead < ApplicationRecord
     include SoftDelete
 
@@ -19,7 +12,7 @@ class SoftDeleteTest < ActiveSupport::TestCase
 
     before_validation :check_name_not_exist
     def check_name_not_exist
-      if WalkingDead.unscoped.where(name: self.name).count > 0
+      if WalkingDead.unscoped.where(name: name).count > 0
         errors.add("name", "已经存在")
       end
     end

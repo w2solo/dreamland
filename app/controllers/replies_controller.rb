@@ -14,7 +14,7 @@ class RepliesController < ApplicationController
     if @reply.save
       current_user.read_topic(@topic)
       current_user.change_score(:creat_comment) if @topic.replies.where(user_id: current_user.id).size == 1
-      @msg = t("topics.reply_success")
+      @msg = t("replies.created_successfully")
     else
       @msg = @reply.errors.full_messages.join("<br />")
     end
@@ -53,21 +53,21 @@ class RepliesController < ApplicationController
       current_user.change_score(:delete_comment) if @topic.replies.where(user_id: current_user.id).size == 0
       redirect_to(topic_path(@reply.topic_id), notice: "回帖删除成功。")
     else
-      redirect_to(topic_path(@reply.topic_id), alert: "程序异常，删除失败。")
+      redirect_to(topic_path(@reply.topic_id), alert: t("common.unknow_error"))
     end
   end
 
   protected
 
-    def set_topic
-      @topic = Topic.find(params[:topic_id])
-    end
+  def set_topic
+    @topic = Topic.find(params[:topic_id])
+  end
 
-    def set_reply
-      @reply = Reply.find(params[:id])
-    end
+  def set_reply
+    @reply = Reply.find(params[:id])
+  end
 
-    def reply_params
-      params.require(:reply).permit(:body, :reply_to_id)
-    end
+  def reply_params
+    params.require(:reply).permit(:body, :reply_to_id)
+  end
 end

@@ -15,21 +15,21 @@ class UsersHelperTest < ActionView::TestCase
 
   test "user_name_tag should result right html in normal" do
     user = build(:user)
-    assert_equal link_to(user.login, user_path(user.login), class: "user-name", "data-name" => user.name), user_name_tag(user)
+    assert_equal link_to(user.login, user_path(user.login), :class => "user-name", "data-name" => user.name), user_name_tag(user)
   end
 
   test "user_name_tag should result right html with string param and downcase url" do
     login = "Monster"
-    assert_equal link_to(login, user_path(login), class: "user-name", "data-name" => login), user_name_tag(login)
+    assert_equal link_to(login, user_path(login), :class => "user-name", "data-name" => login), user_name_tag(login)
   end
 
   test "user_name_tag should out name with Team" do
     user = build(:team)
-    assert_equal link_to(user.name, user_path(user.login), class: "team-name", "data-name" => user.name), user_name_tag(user)
+    assert_equal link_to(user.name, user_path(user.login), :class => "team-name", "data-name" => user.name), user_name_tag(user)
   end
 
   test "user_name_tag should result empty with nil param" do
-    assert_equal "匿名", user_name_tag(nil)
+    assert_equal "Unknow user", user_name_tag(nil)
   end
 
   test "user_avatar_tag should work if user not exist" do
@@ -84,8 +84,8 @@ class UsersHelperTest < ActionView::TestCase
 
     user.update_reward_fields(alipay: "xxx")
     html = reward_user_tag(user)
-    assert_equal %(<a class="btn btn-success" data-remote="true" href="/#{user.login}/reward"><i class='icon fa fa-qrcode'></i> <span>打赏支持</span></a>), html
+    assert_equal %(<a class="btn btn-success" data-remote="true" href="/#{user.login}/reward"><i class='icon fa fa-qrcode'></i> <span>Reward</span></a>), html
     html = reward_user_tag(user, class: "btn btn-default")
-    assert_equal %(<a class="btn btn-default" data-remote="true" href="/#{user.login}/reward"><i class='icon fa fa-qrcode'></i> <span>打赏支持</span></a>), html
+    assert_equal %(<a class="btn btn-default" data-remote="true" href="/#{user.login}/reward"><i class='icon fa fa-qrcode'></i> <span>Reward</span></a>), html
   end
 end

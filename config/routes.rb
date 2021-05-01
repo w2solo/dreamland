@@ -13,13 +13,9 @@ Rails.application.routes.draw do
   resources :devices
   resources :teams
 
-  if Setting.has_module?(:home)
-    root to: "home#index"
-  else
-    root to: "topics#index"
-  end
+  root to: "topics#index"
   match "/uploads/:path(![large|lg|md|sm|xs])", to: "home#uploads", via: :get, constraints: {
-    path: /[\w\d\.\/\-]+/i
+    path: /[\w\d.\/\-]+/i
   }
   get "status", to: "home#status"
 
@@ -59,7 +55,7 @@ Rails.application.routes.draw do
   end
 
   get "topics/node:id", to: "topics#node", as: "node_topics"
-  get "topics/node:id/feed", to: "topics#node_feed", as: "feed_node_topics", defaults: { format: "xml" }
+  get "topics/node:id/feed", to: "topics#node_feed", as: "feed_node_topics", defaults: {format: "xml"}
 
   resources :topics do
     member do
@@ -81,7 +77,7 @@ Rails.application.routes.draw do
       get :banned
       get :excellent
       get :favorites
-      get :feed, defaults: { format: "xml" }
+      get :feed, defaults: {format: "xml"}
       post :preview
     end
 
@@ -106,17 +102,20 @@ Rails.application.routes.draw do
       end
     end
     resources :site_configs
-    resources :replies
+    resources :replies do
+      member do
+        post :revert
+      end
+    end
     resources :topics do
       member do
         post :suggest
         post :unsuggest
-        post :undestroy
+        post :revert
       end
     end
     resources :nodes
-    resources :sections
-    resources :users, constraints: { id: /[#{User::LOGIN_FORMAT}]*/ } do
+    resources :users, constraints: {id: /[#{User::LOGIN_FORMAT}]*/o} do
       member do
         delete :clean
       end
@@ -208,7 +207,7 @@ Rails.application.routes.draw do
   get "users/city/:id", to: "users#city", as: "location_users"
   get "users", to: "users#index", as: "users"
 
-  constraints(id: /[#{User::LOGIN_FORMAT}]*/) do
+  constraints(id: /[#{User::LOGIN_FORMAT}]*/o) do
     resources :users, path: "", as: "users" do
       member do
         get :feed
@@ -223,7 +222,6 @@ Rails.application.routes.draw do
         post :unfollow
         get :followers
         get :following
-        get :calendar
         get :reward
         get :scores
       end

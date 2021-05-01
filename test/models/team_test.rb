@@ -16,6 +16,12 @@ class TeamTest < ActiveSupport::TestCase
     assert_equal true, team.valid?
   end
 
+  test "destroy" do
+    team = create(:team)
+    team.destroy
+    assert_nil Team.find_by(id: team.id)
+  end
+
   test ".owner? / .member?" do
     team = create(:team)
     team_owner = create(:team_owner, team: team)
@@ -42,7 +48,7 @@ class TeamTest < ActiveSupport::TestCase
     user = create(:user)
     user1 = create(:user)
     team = create(:team, owner_id: user.id)
-    team_user = create(:team_user, team: team, user: user1, role: :member)
+    create(:team_user, team: team, user: user1, role: :member)
 
     # topics should work
     create_list(:topic, 2, user: user, team_id: team.id)

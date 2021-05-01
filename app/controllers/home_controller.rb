@@ -4,7 +4,6 @@ class HomeController < ApplicationController
   before_action :authenticate_user!, only: [:check_in]
 
   def index
-    @excellent_topics = Topic.excellent.recent.fields_for_list.limit(20).to_a
   end
 
   def uploads

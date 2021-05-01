@@ -5,6 +5,7 @@ module Homeland
     attr_accessor :term, :terms
 
     INVALID_CHARS = /[:()&!'"]/
+    JIEBA = JiebaRb::Segment.new
 
     def initialize(term)
       term = term.to_s.squish.gsub(INVALID_CHARS, "")
@@ -24,9 +25,7 @@ module Homeland
 
     class << self
       def jieba
-        return @jieba if defined? @jieba
-
-        @jieba = JiebaRb::Segment.new
+        JIEBA
       end
     end
 
@@ -36,10 +35,10 @@ module Homeland
 
     def ts_query
       @ts_query ||= begin
-                      all_terms = @term.split
-                      query = SearchDocument.sanitize_sql(all_terms.map { |t| "#{PG::Connection.escape_string(t)}:*" }.join(" & "))
-                      "TO_TSQUERY('simple', '#{query}')"
-                    end
+        all_terms = @term.split
+        query = SearchDocument.sanitize_sql(all_terms.map { |t| "#{PG::Connection.escape_string(t)}:*" }.join(" & "))
+        "TO_TSQUERY('simple', '#{query}')"
+      end
     end
   end
 end

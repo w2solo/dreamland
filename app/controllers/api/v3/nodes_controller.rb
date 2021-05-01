@@ -8,8 +8,8 @@ module Api
       # GET /api/v3/nodes
       # @return [Array<NodeSerializer>]
       def index
-        @nodes = Node.includes(:section).all
-        @meta = { total: Node.count }
+        @nodes = Node.sorted.all
+        @meta = {total: Node.count}
       end
 
       ##

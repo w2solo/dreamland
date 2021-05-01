@@ -8,8 +8,12 @@ class ApplicationHelperTest < ActionView::TestCase
   end
 
   test "markdown" do
-    assert_equal "<p> foo</p>", markdown("<script>alert()</script> foo")
-    assert_equal "<p> foo</p>", markdown("<style>.body {}</style> foo")
+    assert_equal "<p>foo <strong>bar</strong>alert()</p>", markdown("foo **bar**<script>alert()</script>")
+    assert_equal "<p>Hello world alert()</p>", markdown("Hello world <script>alert()</script>")
+  end
+
+  test "sanitize_markdown" do
+    assert_equal "<p>Hello world alert()</p>", sanitize_markdown("<p>Hello world <script>alert()</script></p>")
   end
 
   test "formats the flash messages" do
@@ -19,15 +23,15 @@ class ApplicationHelperTest < ActionView::TestCase
     close_html = %(<button name="button" type="button" class="close" data-dismiss="alert"><span aria-hidden="true">&times;</span></button>)
 
     controller.flash[:notice] = "hello"
-    assert_equal %{<div class="alert alert-success">#{close_html}hello</div>}, notice_message
+    assert_equal %(<div class="alert alert-success">#{close_html}hello</div>), notice_message
     controller.flash[:notice] = nil
 
     controller.flash[:warning] = "hello"
-    assert_equal %{<div class="alert alert-warning">#{close_html}hello</div>}, notice_message
+    assert_equal %(<div class="alert alert-warning">#{close_html}hello</div>), notice_message
     controller.flash[:warning] = nil
 
     controller.flash[:alert] = "hello"
-    assert_equal %{<div class="alert alert-danger">#{close_html}hello</div>}, notice_message
+    assert_equal %(<div class="alert alert-danger">#{close_html}hello</div>), notice_message
   end
 
   test "admin?" do
@@ -100,9 +104,9 @@ class ApplicationHelperTest < ActionView::TestCase
   test "insert_code_menu_items_tag" do
     Setting.stubs(:editor_languages).returns(%w[go rb 123 js])
     html = <<~HTML
-    <a class="dropdown-item" data-lang="go" href="#">Go</a>
-    <a class="dropdown-item" data-lang="rb" href="#">Ruby</a>
-    <a class="dropdown-item" data-lang="js" href="#">JavaScript</a>
+      <a class="dropdown-item" data-lang="go" href="#">Go</a>
+      <a class="dropdown-item" data-lang="rb" href="#">Ruby</a>
+      <a class="dropdown-item" data-lang="js" href="#">JavaScript</a>
     HTML
 
     assert_html_equal html, insert_code_menu_items_tag

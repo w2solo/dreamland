@@ -8,8 +8,9 @@ module ApplicationHelper
     end
   end
 
+  # plugins/jobs required this method
   def sanitize_markdown(html)
-    raw Sanitize.fragment(html, Homeland::Sanitize::DEFAULT)
+    sanitize(html, scrubber: Homeland::Sanitize::TOPIC_SCRUBBER)
   end
 
   def notice_message
@@ -19,7 +20,7 @@ module ApplicationHelper
 
     flash.each do |type, message|
       type = :success if type.to_sym == :notice
-      type = :danger  if type.to_sym == :alert
+      type = :danger if type.to_sym == :alert
       text = content_tag(:div, raw(close_html) + message, class: "alert alert-#{type}")
       flash_messages << text if message
     end
@@ -80,7 +81,7 @@ module ApplicationHelper
     Setting.editor_languages.each do |lang|
       lexer = Rouge::Lexer.find(lang)
       if lexer
-        dropdown_items << link_to(lexer.title, "#", class: "dropdown-item", data: { lang: lang })
+        dropdown_items << link_to(lexer.title, "#", class: "dropdown-item", data: {lang: lang})
       end
     end
     raw dropdown_items.join("")
@@ -95,7 +96,9 @@ module ApplicationHelper
     if opts[:label]
       label = %(<span>#{opts[:label]}</span>)
     end
-    raw "<i class='icon fa fa-#{name}'></i> #{label}"
+    icon = "<i class='icon fa fa-#{name}'></i>"
+    icon = "#{icon} #{label}" if label.present?
+    raw icon
   end
 
   def icon_bold_tag(name, opts = {})
@@ -119,7 +122,7 @@ module ApplicationHelper
     list.each do |link|
       urls = link.match(/href=(["'])(.*?)(\1)/) || []
       url = urls.length > 2 ? urls[2] : nil
-      if url && current_page?(url) || (@current&.include?(url))
+      if url && current_page?(url) || @current&.include?(url)
         link = link.gsub("nav-link", "nav-link active")
       end
       items << content_tag("li", raw(link), class: "nav-item")
@@ -139,7 +142,6 @@ module ApplicationHelper
   def social_share_button_tag(title)
     super(title, allow_sites: Setting.share_allow_sites)
   end
-
 
   # Render div.form-group with a block, it including validation error below input
   #

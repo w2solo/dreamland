@@ -12,7 +12,7 @@ describe TeamUsersController do
     it "should work" do
       get user_team_users_path(team)
       assert_equal 200, response.status
-      assert_equal true, response.body.include?("成员列表")
+      assert_equal true, response.body.include?("Members")
     end
 
     describe "Normal user" do
@@ -29,7 +29,7 @@ describe TeamUsersController do
         sign_in team_member.user
         get user_team_users_path(team)
         assert_equal 200, response.status
-        assert_equal false, response.body.include?("邀请成员")
+        assert_equal false, response.body.include?("Add a member")
         assert_equal false, response.body.include?("/people/new")
       end
     end
@@ -39,7 +39,7 @@ describe TeamUsersController do
         sign_in team_owner.user
         get user_team_users_path(team)
         assert_equal 200, response.status
-        assert_equal true, response.body.include?("邀请成员")
+        assert_equal true, response.body.include?("Add a member")
         assert_equal true, response.body.include?("/people/new")
       end
     end
@@ -67,7 +67,7 @@ describe TeamUsersController do
       login: user.login,
       role: :member
     }
-    post user_team_users_path(team), params: { team_user: team_user }
+    post user_team_users_path(team), params: {team_user: team_user}
     assert_redirected_to user_team_users_path(team)
 
     team_user = team.team_users.last
@@ -101,7 +101,7 @@ describe TeamUsersController do
         user_id: 123,
         role: :owner
       }
-      put user_team_user_path(team, team_user), params: { team_user: params }
+      put user_team_user_path(team, team_user), params: {team_user: params}
       old_user_id = team_user.user_id
       team_user.reload
       assert_equal old_user_id, team_user.user_id
@@ -116,7 +116,7 @@ describe TeamUsersController do
         login: user.login,
         role: :member
       }
-      get edit_user_team_user_path(team, team_user), params: { team_user: params }
+      get edit_user_team_user_path(team, team_user), params: {team_user: params}
       assert_redirected_to root_path
     end
   end

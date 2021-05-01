@@ -25,8 +25,8 @@ describe Api::V3::TopicsController do
 
       assert_equal 4, json1["topics"].size
       fields = %w[id title created_at updated_at replied_at
-                  replies_count node_name node_id last_reply_user_id
-                  last_reply_user_login deleted excellent likes_count]
+        replies_count node_name node_id last_reply_user_id
+        last_reply_user_login deleted excellent likes_count]
       assert_has_keys json1["topics"][0], *fields
       titles = json1["topics"].map { |topic| topic["title"] }
       assert_includes titles, "This is a normal topic"
@@ -291,8 +291,8 @@ describe Api::V3::TopicsController do
       get "/api/v3/topics/#{t.id}.json"
       assert_equal 200, response.status
       fields = %w[id title created_at updated_at replied_at body body_html
-                  replies_count node_name node_id last_reply_user_id
-                  last_reply_user_login deleted user likes_count suggested_at closed_at]
+        replies_count node_name node_id last_reply_user_id
+        last_reply_user_login deleted user likes_count suggested_at closed_at]
 
       assert_has_keys json["topic"], *fields
       assert_has_keys json["meta"], "liked", "favorited", "followed"
@@ -426,7 +426,7 @@ describe Api::V3::TopicsController do
       t = create(:topic, title: "new topic 1", closed_at: Time.now)
       post "/api/v3/topics/#{t.id}/replies.json", body: "new reply body"
       assert_equal 400, response.status
-      assert_includes json["message"], "已关闭，不再接受回帖"
+      assert_includes json["message"], "Topic has been closed, no longer accepting create or update replies."
       assert_nil t.reload.replies.first
     end
   end

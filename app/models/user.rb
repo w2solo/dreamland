@@ -6,18 +6,17 @@ class User < ApplicationRecord
   include Searchable
   include User::Roles, User::Blockable, User::Likeable, User::Followable, User::TopicActions,
           User::GitHubRepository, User::ProfileFields, User::RewardFields, User::Deviseable,
-          User::Avatar, User::Scores
+          User::Avatar, User::Scores, User::SoftDelete
 
   second_level_cache version: 4, expires_in: 2.weeks
 
-  LOGIN_FORMAT              = 'A-Za-z0-9\-\_\.'
+  LOGIN_FORMAT = 'A-Za-z0-9\-\_\.'
   ALLOW_LOGIN_FORMAT_REGEXP = /\A[#{LOGIN_FORMAT}]+\z/
 
   ACCESSABLE_ATTRS = %i[name email_public location company bio website github twitter tagline avatar by
-                        current_password password password_confirmation _rucaptcha]
+    current_password password password_confirmation _rucaptcha]
 
   has_one :profile, dependent: :destroy
-
   has_many :topics, dependent: :destroy
   has_many :replies, dependent: :destroy
   has_many :authorizations, dependent: :destroy
@@ -31,11 +30,11 @@ class User < ApplicationRecord
 
   attr_accessor :password_confirmation
 
-  validates :login, format: { with: ALLOW_LOGIN_FORMAT_REGEXP, message: "只允许数字、大小写字母、中横线、下划线" },
-                    length: { in: 2..20 },
+  validates :login, format: {with: ALLOW_LOGIN_FORMAT_REGEXP, message: I18n.t("users.username_allows_format")},
+                    length: {in: 2..20},
                     presence: true,
-                    uniqueness: { case_sensitive: false }
-  validates :name, length: { maximum: 20 }
+                    uniqueness: {case_sensitive: false}
+  validates :name, length: {maximum: 20}
 
   after_commit :send_welcome_mail, on: :create
 
@@ -43,15 +42,15 @@ class User < ApplicationRecord
   scope :without_team, -> { where(type: nil) }
   scope :fields_for_list, lambda {
     select(:type, :id, :name, :login, :email, :email_md5, :email_public,
-           :avatar, :state, :tagline, :github, :website, :location,
-           :location_id, :twitter, :team_users_count, :created_at, :updated_at)
+      :avatar, :state, :tagline, :github, :website, :location,
+      :location_id, :twitter, :team_users_count, :created_at, :updated_at)
   }
 
   # Override Devise database authentication
   def self.find_for_database_authentication(warden_conditions)
     conditions = warden_conditions.dup
     login = conditions.delete(:login).downcase
-    where(conditions.to_h).where(["(lower(login) = :value OR lower(email) = :value) and state != -1", { value: login }]).first
+    where(conditions.to_h).where(["(lower(login) = :value OR lower(email) = :value) and state != -1", {value: login}]).first
   end
 
   def self.find_by_email(email)
@@ -95,7 +94,7 @@ class User < ApplicationRecord
   end
 
   def organization?
-    self.user_type == :team
+    user_type == :team
   end
 
   def email=(val)
@@ -114,7 +113,7 @@ class User < ApplicationRecord
 
   def github_url
     return "" if github.blank?
-    "https://github.com/#{github.split('/').last}"
+    "https://github.com/#{github.split("/").last}"
   end
 
   def website_url
@@ -132,44 +131,21 @@ class User < ApplicationRecord
     "#{login} (#{name})"
   end
 
-  # 软删除
-  def soft_delete
-    self.state = "deleted"
-    save(validate: false)
-  end
-
-  # @example.com 的可以修改邮件地址
+  # Only suffix as @example.com can modify email
   def email_locked?
     !legacy_omniauth_logined?
   end
 
-  def calendar_data
-    Rails.cache.fetch(["user", self.id, "calendar_data", Date.today, "by-months"]) do
-      calendar_data_without_cache
-    end
-  end
-
-  def calendar_data_without_cache
-    date_from = 12.months.ago.beginning_of_month.to_date
-    replies = self.replies.where("created_at > ?", date_from)
-                  .group("date(created_at AT TIME ZONE 'CST')")
-                  .select("date(created_at AT TIME ZONE 'CST') AS date, count(id) AS total_amount").all
-
-    replies.each_with_object({}) do |reply, timestamps|
-      timestamps[reply["date"].to_time.to_i.to_s] = reply["total_amount"]
-    end
-  end
-
   def team_options
     return @team_options if defined? @team_options
-    teams = self.admin? ? Team.all : self.teams
+    teams = admin? ? Team.all : self.teams
     @team_options = teams.collect { |t| [t.name, t.id] }
   end
 
   # for Searchable
   def as_indexed_json
     {
-      title: fullname,
+      title: fullname
     }.as_json
   end
 

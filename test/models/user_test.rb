@@ -9,7 +9,9 @@ class UserTest < ActiveSupport::TestCase
     @user = nil
   end
 
-  def user; @user ||= create(:user); end
+  def user
+    @user ||= create(:user)
+  end
 
   test "user_type" do
     assert_equal :user, user.user_type
@@ -27,7 +29,7 @@ class UserTest < ActiveSupport::TestCase
       assert_equal true, user.valid?
     end
 
-    invalid_logins = %w[*ll&&^12 abdddddc$ $abdddddc aaa*11 ]
+    invalid_logins = %w[*ll&&^12 abdddddc$ $abdddddc aaa*11]
     invalid_logins.each do |login|
       user = build(:user, login: login)
       assert_equal false, user.valid?
@@ -67,23 +69,6 @@ class UserTest < ActiveSupport::TestCase
     assert_equal true, user.topic_read?(topic)
   end
 
-  test "#read_topic? user can soft_delete" do
-    topic = create(:topic)
-
-    user_for_delete1 = create(:user)
-    user_for_delete2 = create(:user)
-
-    User.any_instance.stubs(:update_index).returns(true)
-    Rails.cache.write("user:#{user.id}:topic_read:#{topic.id}", nil)
-    user_for_delete1.soft_delete
-    user_for_delete1.reload
-    assert_equal "deleted", user_for_delete1.state
-    user_for_delete2.soft_delete
-    user_for_delete1.reload
-    assert_equal "deleted", user_for_delete1.state
-    assert_equal [], user_for_delete1.authorizations
-  end
-
   test "#filter_readed_topics" do
     topics = create_list(:topic, 3)
 
@@ -97,13 +82,13 @@ class UserTest < ActiveSupport::TestCase
   end
 
   test "location" do
-    Location.count == 0
+    assert_equal 0, Location.count
 
     # should get results when user location is set
     user.location = "hangzhou"
     user.reload
     create(:user, location: "Hongkong")
-    Location.count == 2
+    assert_equal 2, Location.count
 
     # should update users_count when user location changed
     old_name = user.location
@@ -283,7 +268,7 @@ class UserTest < ActiveSupport::TestCase
   end
 
   test "like reply" do
-    topic = create(:topic)
+    create(:topic)
     reply = create(:reply)
 
     user.like(reply)
@@ -313,11 +298,9 @@ class UserTest < ActiveSupport::TestCase
   end
 
   test "#find_by_login!" do
-
     u = User.find_by_login!(user.login)
     assert_equal user.id, u.id
     assert_equal user.login, u.login
-
 
     # should ignore case
     u = User.find_by_login!(user.login.upcase)
@@ -336,8 +319,8 @@ class UserTest < ActiveSupport::TestCase
 
   test "find_by_login! Simple prefix user exists" do
     user1 = create :user, login: "foo"
-    user2 = create :user, login: "foobar"
-    user2 = create :user, login: "a2foo"
+    create :user, login: "foobar"
+    create :user, login: "a2foo"
 
     u = User.find_by_login!(user1.login)
     assert_equal user1.id, u.id
@@ -385,38 +368,37 @@ class UserTest < ActiveSupport::TestCase
   test ".level / .level_name" do
     u1 = User.new(state: :member)
     assert_equal "member", u1.level
-    assert_equal "会员", u1.level_name
+    assert_equal "Member", u1.level_name
 
     # newbie
     u1.stub(:newbie?, true) do
       assert_equal "newbie", u1.level
-      assert_equal "新手", u1.level_name
+      assert_equal "Newbi", u1.level_name
     end
 
     u1 = User.new(state: :admin)
     assert_equal "admin", u1.level
-    assert_equal "管理员", u1.level_name
+    assert_equal "Admin", u1.level_name
 
     u1 = User.new(state: :maintainer)
     assert_equal "maintainer", u1.level
-    assert_equal "版主", u1.level_name
+    assert_equal "Maintainer", u1.level_name
 
     # vip
     u1 = User.new(state: :vip)
     assert_equal "vip", u1.level
-    assert_equal "高级会员", u1.level_name
+    assert_equal "VIP", u1.level_name
 
     # blocked
     u1 = User.new(state: :blocked)
     assert_equal "blocked", u1.level
-    assert_equal "禁言用户", u1.level_name
+    assert_equal "Banned", u1.level_name
 
     # blocked
     u1 = User.new(state: :deleted)
     assert_equal "deleted", u1.level
-    assert_equal "已注销", u1.level_name
+    assert_equal "Deleted", u1.level_name
   end
-
 
   test "#find_for_database_authentication" do
     user = create(:user, login: "foo", email: "foobar@gmail.com")
@@ -435,24 +417,8 @@ class UserTest < ActiveSupport::TestCase
     assert_equal false, User.new(email: "foobar@example.com").email_locked?
   end
 
-  test ".calendar_data" do
-    d1 = "1576339200"
-    d2 = "1576944000"
-    d3 = "1577116800"
-    create(:reply, user: user, created_at: Time.at(d1.to_i + 2.hours))
-    create_list(:reply, 2, user: user, created_at: Time.at(d2.to_i + 2.hours))
-    create_list(:reply, 6, user: user, created_at: Time.at(d3.to_i + 2.hours))
-
-    data = user.calendar_data
-    assert_equal 3, data.keys.count
-    # expect(data.keys).to include(d1, d2, d3)
-    # expect(data[d1]).to eq 1
-    # expect(data[d2]).to eq 2
-    # expect(data[d3]).to eq 6
-  end
-
   test ".team_options" do
-    user2 = create(:user)
+    create(:user)
 
     team_users = create_list(:team_user, 2, user: user)
     teams = team_users.collect(&:team).sort

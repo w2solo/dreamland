@@ -7,41 +7,11 @@ require "nokogiri"
 module Homeland
   class Pipeline
     class MarkdownFilter < HTML::Pipeline::TextFilter
-      DEFAULT_OPTIONS = {
-        no_styles: true,
-        hard_wrap: true,
-        autolink: true,
-        fenced_code_blocks: true,
-        strikethrough: true,
-        underline: true,
-        superscript: false,
-        footnotes: false,
-        highlight: false,
-        tables: true,
-        lax_spacing: true,
-        space_after_headers: true,
-        disable_indented_code_blocks: true,
-        no_intra_emphasis: true
-      }
-
-      def call
-        html = Render.to_html(@text)
-        html.strip!
-        html
-      end
-
       class Render < Redcarpet::Render::HTML
         include Rouge::Plugins::Redcarpet
 
-        attr_accessor :domain
-
-        class << self
-          def to_html(raw)
-            renderer = self.new
-            renderer.domain = Setting.domain
-            @render ||= Redcarpet::Markdown.new(renderer, DEFAULT_OPTIONS)
-            @render.render(raw)
-          end
+        def domain
+          Setting.domain
         end
 
         def block_code(code, lang)
@@ -88,8 +58,12 @@ module Homeland
         def link(link, title, content)
           external = false
           safe_link = link&.split("?")&.first
-          uri = URI.parse(safe_link) rescue nil
-          if uri&.host && uri&.host&.downcase != self.domain
+          uri = begin
+            URI.parse(safe_link)
+          rescue
+            nil
+          end
+          if uri&.host && uri&.host&.downcase != domain
             external = true
           end
 
@@ -110,7 +84,7 @@ module Homeland
               # 防止 C 的 autolink 出来的内容有编码错误，万一有就直接跳过转换
               # 比如这句: 此版本并非线上的http://yavaeye.com的源码.
               link.match(/.+?/)
-            rescue StandardError
+            rescue
               return link
             end
             # Fix Chinese neer the URL
@@ -119,6 +93,35 @@ module Homeland
             %(<a href="#{link}" rel="nofollow" target="_blank">#{link}</a>#{bad_text})
           end
         end
+      end
+
+      DEFAULT_OPTIONS = {
+        no_styles: true,
+        hard_wrap: true,
+        autolink: true,
+        fenced_code_blocks: true,
+        strikethrough: true,
+        underline: true,
+        superscript: false,
+        footnotes: false,
+        highlight: false,
+        tables: true,
+        lax_spacing: true,
+        space_after_headers: true,
+        disable_indented_code_blocks: true,
+        no_intra_emphasis: true
+      }
+
+      def renderer
+        # Do not share a single Redcarpet::Markdown object across threads
+        # https://github.com/vmg/redcarpet/pull/672
+        Thread.current[:homeland_markdown_renderer] ||= begin
+          Redcarpet::Markdown.new(Render, DEFAULT_OPTIONS)
+        end
+      end
+
+      def call
+        renderer.render(@text)
       end
     end
   end

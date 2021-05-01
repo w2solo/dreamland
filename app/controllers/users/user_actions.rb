@@ -7,8 +7,8 @@ module Users
     included do
       before_action :authenticate_user!, only: %i[block unblock blocked follow unfollow]
       before_action :only_user!, only: %i[topics replies favorites
-                                          block unblock follow unfollow
-                                          followers following calendar reward]
+        block unblock follow unfollow
+        followers following reward]
     end
 
     def topics
@@ -28,12 +28,12 @@ module Users
 
     def block
       current_user.block_user(@user.id)
-      render json: { code: 0 }
+      render json: {code: 0}
     end
 
     def unblock
       current_user.unblock_user(@user.id)
-      render json: { code: 0 }
+      render json: {code: 0}
     end
 
     def blocked
@@ -67,11 +67,6 @@ module Users
       render template: "/users/followers"
     end
 
-    def calendar
-      data = @user.calendar_data
-      render json: data
-    end
-
     def reward
     end
 
@@ -83,13 +78,13 @@ module Users
 
     private
 
-      def only_user!
-        render_404 if @user_type != :user
-      end
+    def only_user!
+      render_404 if @user_type != :user
+    end
 
-      def user_show
-        @topics = @user.topics.fields_for_list.high_likes.page(params[:page])
-        @replies = @user.replies.without_system.fields_for_list.recent.includes(:topic).limit(10)
-      end
+    def user_show
+      @topics = @user.topics.fields_for_list.high_likes.page(params[:page])
+      @replies = @user.replies.without_system.fields_for_list.recent.includes(:topic).limit(10)
+    end
   end
 end

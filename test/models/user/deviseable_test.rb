@@ -3,12 +3,14 @@
 require "test_helper"
 
 class User::DeviseableTest < ActiveSupport::TestCase
+  include ActiveJob::TestHelper
+
   class Monkey < ApplicationRecord
     include User::Deviseable
   end
 
   setup do
-    @data = { "email" => "email@example.com", "nickname" => "_why", "name" => "why" }
+    @data = {"email" => "email@example.com", "nickname" => "_why", "name" => "why"}
     @uid = "42"
   end
 
@@ -45,7 +47,7 @@ class User::DeviseableTest < ActiveSupport::TestCase
     Monkey.new_from_provider_data("github", nil, data).save # create a new user first
     time = Time.now
     Time.stub(:now, time) do
-      assert_equal "#{data['nickname']}-github", Monkey.new_from_provider_data("github", nil, data).login
+      assert_equal "#{data["nickname"]}-github", Monkey.new_from_provider_data("github", nil, data).login
     end
   end
 
@@ -61,5 +63,13 @@ class User::DeviseableTest < ActiveSupport::TestCase
   test "new_from_provider_data should set user tagline" do
     description = data["description"] = "A newbie Ruby developer"
     assert_equal description, Monkey.new_from_provider_data(nil, nil, data).tagline
+  end
+
+  test "async mailer" do
+    user = create(:user)
+
+    assert_performed_jobs 1 do
+      user.send(:send_devise_notification, :reset_password_instructions, "foobar")
+    end
   end
 end

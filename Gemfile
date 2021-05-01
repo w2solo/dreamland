@@ -1,89 +1,70 @@
 # frozen_string_literal: true
 
-# source "https://rubygems.org"
-source "https://gems.ruby-china.com"
+source "https://rubygems.org"
 
 git_source(:github) { |repo_name| "https://github.com/#{repo_name}.git" }
 
 gem "jbuilder"
-gem "rails", "6.1.3.1"
+gem "rails"
 gem "rails_autolink"
 gem "sass-rails"
 gem "turbolinks"
 gem "uglifier"
 gem "webpacker", "~> 5.x"
 
-gem "sanitize"
+gem "view_component", require: "view_component/engine"
 
 gem "pg"
-gem "jieba-rb"
-gem "pghero", github: "ankane/pghero"
 
-gem "dotenv-rails"
-
-gem "rack-attack"
-
-gem "http_accept_language"
-gem "rails-i18n"
-gem "twemoji"
-
-# OAuth Provider
-gem "doorkeeper"
-gem "doorkeeper-i18n"
-
-gem "bulk_insert", github: "huacnlee/bulk_insert", branch: "fix-for-rails-6.1"
-
-# 上传组件
-gem "carrierwave"
-# Aliyun / Upyun / Qiniu 可选项
-gem "carrierwave-aliyun"
-gem "carrierwave-upyun"
-gem "carrierwave-qiniu"
-gem "qiniu", github: "qiniu/ruby-sdk", branch: "develop"
-
-# Lazy load
-gem "mini_magick", require: false
-
-# 验证码
-gem "rucaptcha"
-gem "recaptcha"
-
-# 用户系统
 gem "devise"
 gem "devise-encryptable"
-
-# 通知系统
-gem "notifications"
-gem "ruby-push-notifications"
-
-# 赞、关注、收藏、屏蔽等功能的数据结构
-gem "action-store"
-
-# Rails Enum 扩展
-gem "enumize"
-
-# 分页
-gem "kaminari"
-
-# Form select 选项
-gem "form-select"
-
-# 三方平台 OAuth 验证登录
+gem "cancancan"
+gem "doorkeeper"
+gem "doorkeeper-i18n"
 gem "omniauth", "~> 1.x"
-gem "omniauth-github", "1.4.0"
+gem "omniauth-github"
 gem "omniauth-twitter"
 gem "omniauth-wechat-oauth2"
 gem "omniauth-rails_csrf_protection"
 
-# Permission
-gem "cancancan"
+gem "jieba-rb"
+gem "dotenv-rails"
 
-# Redis
-gem "redis"
-gem "redis-namespace", github: "resque/redis-namespace"
-gem "redis-objects"
+gem "rack-attack"
+gem "http_accept_language"
+gem "rails-i18n"
+gem "twemoji"
+
+# Uploader
+gem "carrierwave"
+# Aliyun / Upyun / Qiniu
+gem "carrierwave-aliyun"
+gem "carrierwave-upyun"
+gem "carrierwave-qiniu"
+gem "qiniu"
+
+gem "mini_magick", require: false
+
+# Captcha
+gem "rucaptcha"
+gem "recaptcha"
+
+# Notification
+gem "notifications"
+gem "ruby-push-notifications"
+
+gem "action-store"
+
+gem "kaminari"
+gem "form-select"
+gem "enumize"
+
+gem "pghero"
+gem "exception-track"
 
 # Cache
+gem "redis"
+gem "redis-namespace"
 gem "second_level_cache"
 
 # Setting
@@ -96,11 +77,9 @@ gem "html-pipeline-auto-correct"
 gem "redcarpet"
 gem "rouge"
 
-# 队列
-gem "sidekiq", "6.0.7"
+gem "sidekiq"
 gem "sidekiq-cron"
 
-# 分享功能
 gem "social-share-button"
 
 # Mailer Service
@@ -112,27 +91,25 @@ gem "puma"
 # API cors
 gem "rack-cors", require: "rack/cors"
 
-gem "exception-track"
-
 gem "bootsnap"
-gem "lograge"
-gem "grade", '0.1.0'
-# gem "grade", git: "git@github.com:w2solo/dreamland-grade.git", branch: "main"
+
+gem "puma_worker_killer"
+
+gem 'grade', '0.1.0'
 
 group :development do
   gem "spring"
   gem "byebug"
+  gem "letter_opener"
+  gem "derailed_benchmarks"
 end
 
 group :development, :test do
-  gem "sdoc"
-  gem "letter_opener"
-  gem "listen", github: "guard/listen"
+  gem "listen"
 
   gem "mocha"
   gem "minitest-spec-rails"
   gem "factory_bot_rails"
 
-  gem "rubocop", require: false
-  gem "codecov", require: false
+  gem "standard"
 end

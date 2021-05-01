@@ -1,7 +1,6 @@
 # frozen_string_literal: true
 
 class User
-  # 允许用户配置 Alipay|Weichat 的打赏二维码
   module RewardFields
     extend ActiveSupport::Concern
 
@@ -19,19 +18,19 @@ class User
     end
 
     def reward_field(field)
-      return nil if self.rewards.blank?
-      rewards[field.to_sym]
+      return nil if rewards.blank?
+      rewards[field.to_s]
     end
 
     def update_reward_fields(field_values)
-      val = self.rewards || {}
+      val = rewards || {}
       field_values.each do |key, value|
         next unless REWARD_FIELDS.include?(key.to_sym)
-        val[key.to_sym] = value
+        val[key.to_s] = value
       end
 
-      self.create_profile if self.profile.blank?
-      self.profile.update(rewards: val)
+      create_profile if profile.blank?
+      profile.update(rewards: val)
     end
   end
 end

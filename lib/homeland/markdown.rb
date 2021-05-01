@@ -15,7 +15,8 @@ filters = [
   Homeland::Pipeline::MentionFilter,
   Homeland::Pipeline::FloorFilter,
   HTML::Pipeline::AutoCorrectFilter,
-  Homeland::Pipeline::TwemojiFilter
+  Homeland::Pipeline::TwemojiFilter,
+  Homeland::Pipeline::ImageproxyFilter
 ]
 
 TopicPipeline = HTML::Pipeline.new(filters, context)
@@ -29,8 +30,8 @@ module Homeland
         result
       end
 
-      def example
-        @example ||= open(Rails.root.join("lib/homeland/markdown_guides.md")).read
+      def example(locale)
+        File.open(Rails.root.join("lib/homeland/markdown/guides.#{locale}.md")).read
       end
     end
   end

@@ -47,7 +47,6 @@ body {
 
 .header,
 .footer,
-.index-sections,
 .index-locations {
   display: none;
 }
@@ -322,8 +321,6 @@ body {
         text-align: right;
         font-weight: normal;
       }
-      .title {
-      }
     }
 
     .media-right {
@@ -446,6 +443,7 @@ body {
   a:visited {
     color: var(--primary) !important;
   }
+
   a.active {
     .fa {
       color: var(--danger);

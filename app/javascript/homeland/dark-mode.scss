@@ -1,85 +1,92 @@
 :root[data-theme="dark"] {
-  --primary: #9e9e9e !important;
+  --primary: #b3b3b3 !important;
   --text-color: #e0e0e0;
   --text-color1: #bbb;
   --text-color2: #999;
   --text-color3: #666;
   --link-color: #222;
-  --gray: #36373ab5;
+  --default: #333;
+  --gray: #5d637314;
   --secondary: #6f6f6f;
   --link-color: #eeeeeebd;
-  --red: #eb5424aa;
-  --red-light: #fdf1ed17;
-  --yellow: #fee209aa;
-  --yellow-light: #fffdee17;
+  --red: #a0051d;
+  --red-light: #fdf1ed10;
+  --yellow: #fee209;
+  --yellow-light: #fffdee10;
   --blue: #2275daaa;
-  --blue-light: #e6f0fb17;
+  --blue-light: #e6f0fb10;
   --green: #19a302aa;
-  --green-light: #f4fff217;
+  --green-light: #f4fff210;
 
   --divider-color: rgba(255, 255, 255, 0.1);
 
-  --btn-default-text-color: #a9a9a9a8;
+  --filter-color: #6f6f6f;
+  --filter-active-color: #bb0b0b0;
+
+  --btn-default-text-color: #c7c7c7;
   --btn-default-background-color: #3d3d3d99;
-  --btn-default-border-color: #1c1c1d;
-  --btn-default-active-background-color: #3d3d3d77;
-  --btn-default-active-border-color: #1c1c1d;
+  --btn-default-border-color: #414144;
+  --btn-default-active-background-color: #27272b99;
+  --btn-default-active-border-color: #414144;
   --btn-default-active-text-color: #eeeeeebd;
-  --btn-default-hover-border-color: #1c1c1d;
+  --btn-default-hover-background-color: #4d4d4d99;
+  --btn-default-hover-border-color: #59595e;
 
-  --form-control-background-color: #101010;
-  --form-control-border-color: #3d3d3d3b;
-  --form-control-disabled-background-color: #27272796;
+  --form-control-background-color: #0104094d;
+  --form-control-border-color: #21262d;
+  --form-control-disabled-background-color: #1a1a1f;
 
-  --input-group-background-color: #1e1e1e;
+  --input-group-background-color: #1a1a1f;
   --input-group-border-color: #3d3d3d3b;
 
   --body-background-color: #000;
 
-  --navbar-background-color: #151516;
+  --navbar-background-color: #0e0e10;
   --navbar-text-color: #a4a8bbde;
   --navbar-shadow-color: #c3c3c526;
-  --navbar-fixed-shadow-color: rgba(144, 144, 144, 0.37);
+  --navbar-fixed-shadow-color: rgba(144, 144, 144, 0.27);
   --navbar-brand-text-color: #aaa;
   --navbar-brand-text-strong-color: #1a5092;
   --navbar-item-link-active-background-color: #151516;
 
-  --sub-navbar-background-color: #23232338;
-  --sub-navbar-shadow-color: #7e7e8638;
+  --sub-navbar-background-color: tranparent;
+  --sub-navbar-shadow-color: #7e7e8632;
 
-  --navbar-topic-title-background-color: #151516;
+  --navbar-topic-title-background-color: #0e0e10;
 
-  --card-border-color: #3d3d3d29;
-  --card-background-color: #181819;
+  --card-border-color: #a3acd024;
+  --card-background-color: #dcdcff0f;
   --card-title-secondary-color: #777;
 
-  --dropdown-menu-background-color: #222222ee;
+  --dropdown-menu-background-color: #0f0f10;
+  --dropdown-menu-border-color: rgb(41 42 47);
   --dropdown-menu-text-color: #a9a9a9a8;
-  --dropdown-menu-divider-color: #3d3d3d99;
+  --dropdown-menu-divider-color: rgb(41 42 47);
 
   --dropdown-item-active-background-color: rgba(200, 200, 200, 0.1);
   --dropdown-item-active-text-color: #fff;
 
-  --modal-background-color: #2d2d2d;
-  --modal-shadow-color: rgba(0, 0, 0, 0.19);
+  --modal-background-color: #16161b;
+  --modal-shadow-color: rgba(0, 0, 0, 0.39);
 
   --list-group-item-border-color: #3d3d3d99;
 
   --table-border-color: #36373ab5;
 
-  --topic-item-border-color: #3d3d3d99;
-  --topic-item-hover-background-color: #222;
+  --topic-item-border-color: #a3acd024;
+  --topic-item-hover-background-color: #7a85980f;
 
   --label-awesome-background-color: #f9cd940d;
 
   --opts-text-color: #6f6f6f;
-  --opts-link-color: #f7f7f7a6;
+  --opts-link-color: #f7f7f77c;
   --opts-link-hover-background-color: #77787926;
+  --opts-active-icon-color: #ccc;
 
   --scrollbar-thumb-color: #333333aa;
   --scrollbar-track-color: transparent;
 
-  --nav-pills-active-background-color: #9e9e9e36;
+  --nav-pills-active-background-color: #27272da1;
   --nav-pills-active-text-color: #fff;
 }
 
@@ -94,10 +101,10 @@
 
   .markdown {
     code {
-      background: #33333347;
+      background: #33333330;
     }
     pre {
-      background: #33333347;
+      background: #33333330;
       color: #eee;
       code {
         background: transparent !important;

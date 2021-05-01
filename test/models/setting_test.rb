@@ -18,7 +18,7 @@ class SettingTest < ActiveSupport::TestCase
   end
 
   test "default_locale" do
-    assert_equal "zh-CN", Setting.default_locale
+    assert_equal "en", Setting.default_locale
   end
 
   test "auto_locale" do
@@ -35,15 +35,30 @@ class SettingTest < ActiveSupport::TestCase
 
   test "protocol" do
     assert_equal "http", Setting.protocol
-    Setting.stub(:https, true) do
+    Rails.env.stub(:production?, true) do
       assert_equal "https", Setting.protocol
     end
   end
 
+  test "domain" do
+    assert_equal "localhost", Setting.safe_domain
+
+    ENV["domain"] = "ruby-china.org"
+    assert_equal "ruby-china.org", Setting.safe_domain
+
+    ENV["domain"] = "*.ruby-china.org"
+    assert_equal "ruby-china.org", Setting.safe_domain
+
+    ENV["domain"] = "*.ruby-china.org,www.ruby-china.org"
+    assert_equal "ruby-china.org", Setting.safe_domain
+
+    ENV["domain"] = "www.ruby-china.org,*.ruby-china.org"
+    assert_equal "www.ruby-china.org", Setting.safe_domain
+  end
+
   test "base_url" do
     Setting.stubs(:domain).returns("homeland.io")
-    Setting.stubs(:https).returns(true)
-    Rails.env.stub(:development?, false) do
+    Setting.stub(:protocol, "https") do
       assert_equal "https://homeland.io", Setting.base_url
     end
 
@@ -111,7 +126,7 @@ class SettingTest < ActiveSupport::TestCase
     Setting.node_ids_hide_in_topics_index = <<~LINES
       100
       101,102,103
-      LINES
+    LINES
     assert_equal %w[100 101 102 103], Setting.node_ids_hide_in_topics_index
   end
 
@@ -119,7 +134,7 @@ class SettingTest < ActiveSupport::TestCase
     Setting.blacklist_ips = <<~LINES
       10.10.10.10
       11.11.11.11,12.12.12.12
-      LINES
+    LINES
     assert_equal ["10.10.10.10", "11.11.11.11", "12.12.12.12"], Setting.blacklist_ips
   end
 
@@ -127,32 +142,32 @@ class SettingTest < ActiveSupport::TestCase
     Setting.ban_words_on_reply = <<~LINES
       This is first line.
       And, this is second line.
-      LINES
+    LINES
     assert_equal ["This is first line.", "And, this is second line."], Setting.ban_words_on_reply
   end
 
   test "tips" do
     Setting.tips = <<~LINES
-    This is first line.
-    And, this is second line.
+      This is first line.
+      And, this is second line.
     LINES
     assert_equal ["This is first line.", "And, this is second line."], Setting.tips
   end
 
   test "share_allow_sites" do
     Setting.share_allow_sites = <<~LINES
-    weibo
-    facebook
-    twitter
+      weibo
+      facebook
+      twitter
     LINES
     assert_equal ["weibo", "facebook", "twitter"], Setting.share_allow_sites
   end
 
   test "editor_languages" do
     Setting.editor_languages = <<~LINES
-    rb
-    html
-    js
+      rb
+      html
+      js
     LINES
 
     assert_equal ["rb", "html", "js"], Setting.editor_languages
@@ -189,6 +204,16 @@ class SettingTest < ActiveSupport::TestCase
       assert_equal true, Setting.cable_allowed_request_origin.match?("https://www.foo.com")
       assert_equal true, Setting.cable_allowed_request_origin.match?("http://www.foo.com:3000")
       assert_equal true, Setting.cable_allowed_request_origin.match?("https://www.foo.com:3000")
+    end
+  end
+
+  test "imageproxy_ignore_hosts" do
+    Setting.stub(:upload_url, "https://bar.com") do
+      assert_equal ["bar.com", "localhost"], Setting.imageproxy_ignore_hosts
+
+      Setting.stub(:asset_host, "https://asset.bar.com") do
+        assert_equal ["bar.com", "asset.bar.com", "localhost"], Setting.imageproxy_ignore_hosts
+      end
     end
   end
 end

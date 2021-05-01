@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 class User
-  # Omniauth 认证函数
+  # Omniauth
   module Deviseable
     extend ActiveSupport::Concern
 
@@ -9,18 +9,19 @@ class User
       attr_accessor :omniauth_provider, :omniauth_uid
 
       devise :database_authenticatable, :registerable, :recoverable, :lockable,
-         :rememberable, :trackable, :validatable, :omniauthable
+        :rememberable, :trackable, :validatable, :omniauthable
 
       after_create :bind_omniauth_on_create
-    end
 
-    def password_required?
-      (authorizations.empty? || !password.blank?) && super
-    end
+      # Override Devise to send mails with async
+      def send_devise_notification(notification, *args)
+        devise_mailer.send(notification, self, *args).deliver_later
+      end
 
-    # Override Devise to send mails with async
-    def send_devise_notification(notification, *args)
-      devise_mailer.send(notification, self, *args).deliver_later
+      # Override Devise password_required?
+      def password_required?
+        (authorizations.empty? || !password.blank?) && super
+      end
     end
 
     def bind?(provider)
@@ -29,20 +30,20 @@ class User
 
     def bind_service(response)
       provider = response["provider"]
-      uid      = response["uid"].to_s
+      uid = response["uid"].to_s
 
       authorizations.create(provider: provider, uid: uid)
     end
 
     def bind_omniauth_on_create
-      if self.omniauth_provider
-        Authorization.find_or_create_by!(provider: self.omniauth_provider, uid: self.omniauth_uid, user_id: self.id)
+      if omniauth_provider
+        Authorization.find_or_create_by!(provider: omniauth_provider, uid: omniauth_uid, user_id: id)
       end
     end
 
     # User who was logined with omniauth but not bind user info (email and password)
     def legacy_omniauth_logined?
-      self.email.include?("@example.com")
+      email.include?("@example.com")
     end
 
     module ClassMethods
@@ -60,7 +61,7 @@ class User
               "#{provider}+#{uid}@example.com"
             end
 
-          user.name  = data["name"]
+          user.name = data["name"]
           user.login = Homeland::Username.sanitize(data["nickname"])
 
           if provider == "github"
@@ -72,18 +73,19 @@ class User
           end
 
           if User.where(login: user.login).exists?
-            user.login = "#{user.github}-github" # TODO: possibly duplicated user login here. What should we do?
+            # TODO: possibly duplicated user login here. What should we do?
+            user.login = "#{user.github}-github"
           end
 
           user.password = Devise.friendly_token[0, 20]
           user.location = data["location"]
-          user.tagline  = data["description"]
+          user.tagline = data["description"]
         end
       end
 
       %w[github].each do |provider|
         define_method "find_or_create_for_#{provider}" do |response|
-          uid  = response["uid"].to_s
+          uid = response["uid"].to_s
           data = response["info"]
 
           user = Authorization.find_by(provider: provider, uid: uid).try(:user)
@@ -95,7 +97,7 @@ class User
             return user
           end
 
-          Rails.logger.warn("User.create_from_hash 失败，#{user.errors.inspect}")
+          Rails.logger.warn("User.create_from_hash error: #{user.errors.inspect}")
           return nil
         end
       end

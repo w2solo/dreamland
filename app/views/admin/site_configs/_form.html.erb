@@ -1,14 +1,15 @@
 <%= form_for @site_config, url: admin_site_config_path(@site_config.var), method: 'patch' do |f| %>
+  <%= render "/shared/error_messages", target: @site_config %>
   <div class="form-group">
     <label>
       <%= @site_config.var %>
       <% if @site_config.require_restart? %>
-        <span class="badge badge-warning">需要重启方可生效</span>
+        <span class="badge badge-warning">reboot required.</span>
       <% end %>
     </label>
     <%
 
-    value = Setting.send(@site_config.var)
+    value = params.dig(:setting, :value) || Setting.send(@site_config.var)
     value = value.join("\n") if value.is_a?(Array)
     %>
     <% if @site_config.var == "timezone" %>
@@ -27,9 +28,8 @@
         <%= f.text_area :value, value: value, class: 'form-control', rows: 15 %>
       <% end %>
     <% end %>
-
     <% if @site_config.type != :boolean %>
-    <div class="form-text"><%= t("setting.#{@site_config.var}") %></div>
+      <div class="form-text mt-2"><%= raw t("setting.#{@site_config.var}") %></div>
     <% end %>
   </div>
   <div class="form-actions">

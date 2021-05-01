@@ -9,7 +9,7 @@ class TeamsController < ApplicationController
 
   def index
     @total_team_count = Team.count
-    @active_teams = Team.fields_for_list.hot.limit(100)
+    @active_teams = Team.fields_for_list.hot.limit(60)
   end
 
   def show
@@ -45,11 +45,11 @@ class TeamsController < ApplicationController
 
   private
 
-    def team_params
-      params.require(:team).permit(:login, :name, :email, :email_public, :bio, :website, :twitter, :github, :location, :avatar)
-    end
+  def team_params
+    params.require(:team).permit(:login, :name, :email, :email_public, :bio, :website, :twitter, :github, :location, :avatar)
+  end
 
-    def set_team
-      @team = Team.find_by_login!(params[:id])
-    end
+  def set_team
+    @team = Team.find_by_login!(params[:id])
+  end
 end

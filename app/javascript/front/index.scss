@@ -218,7 +218,7 @@ hr {
         a:link,
         a:visited,
         a:hover {
-          color: var(--primary);
+          color: var(--filter-active-color);
           text-decoration: none;
         }
       }
@@ -229,15 +229,9 @@ hr {
         padding: 8px 8px;
         margin-right: 5px;
         font-size: 14px;
-        border-bottom: 2px dotted transparent;
         text-decoration: none;
         display: inline-block;
-        color: var(--secondary);
-
-        &:hover {
-          border-color: var(--gray);
-          background: transparent;
-        }
+        color: var(--filter-color);
 
         &.all-nodes {
           border-radius: 3px;
@@ -497,13 +491,6 @@ hr {
     em {
       font-style: normal;
     }
-
-    .opts {
-      a {
-        margin-left: 5px;
-        color: var(--primary);
-      }
-    }
   }
 }
 
@@ -531,7 +518,11 @@ hr {
   }
 
   .buttons {
+    .opts {
+      font-size: 17px;
+    }
     .likes {
+      font-size: 15px;
       a {
         display: block;
         width: 90px;
@@ -543,7 +534,6 @@ hr {
       a:hover,
       a:visited {
         text-decoration: none;
-        color: var(--primary);
       }
       a:hover {
         background: rgba(0, 0, 0, 0.03);
@@ -551,13 +541,7 @@ hr {
       i.fa {
         display: block;
         font-size: 40px;
-        color: var(--primary);
         margin-bottom: 6px;
-      }
-      a.active {
-        i.fa {
-          color: var(--red);
-        }
       }
       span {
         display: block;
@@ -585,16 +569,6 @@ hr {
     .uname {
       color: var(--primary);
     }
-    .opts {
-      a {
-        font-size: 14px;
-        margin-left: 5px;
-        color: var(--primary);
-      }
-      a.edit {
-        display: none;
-      }
-    }
   }
   .reply {
     padding: 15px 25px 25px 25px;
@@ -619,7 +593,7 @@ hr {
     &.reply-deleted {
       padding: 10px calc(25px + 10px);
       margin-bottom: 0;
-      color: #666;
+      color: var(--text-color1);
 
       img.media-object {
         border-radius: 180px;
@@ -630,7 +604,7 @@ hr {
 
       .time {
         margin-left: 4px;
-        color: #aaa;
+        color: var(--text-color3);
       }
       .ban-reason {
         color: #444;
@@ -665,24 +639,37 @@ hr {
       }
 
       .floor {
+        font-size: 0.8em;
         color: #7aa87a;
       }
       a.time {
+        font-size: 0.8em;
         color: #999;
         text-decoration: none !important;
         cursor: pointer;
 
         &:hover {
-          border-bottom: 1px dashed #ccc;
+          border-bottom: 1px dashed var(--text-color3);
         }
       }
     }
 
-    .opts {
+    .actions {
+      position: absolute;
+      top: 0;
+      right: 25px;
+      margin-top: 10px;
+      display: flex;
+      justify-content: space-between;
+
       a {
         display: inline-block;
         vertical-align: baseline;
         text-align: center;
+      }
+
+      a.edit {
+        display: none;
       }
     }
 
@@ -734,16 +721,25 @@ hr {
 
   @media (max-width: 480px) {
     .reply {
-      padding: 10px;
+      padding: 15px 10px;
       padding-left: 58px;
 
       .avatar {
         left: calc(10px + 6px);
       }
 
+      .actions {
+        position: static;
+        top: auto;
+        right: auto;
+        margin-left: -5px;
+        margin-top: 0px;
+        flex-direction: row-reverse;
+      }
+
       &.reply-system,
       &.reply-deleted {
-        padding: 10px 18px;
+        padding: 15px 18px;
       }
     }
   }
@@ -818,70 +814,6 @@ hr {
 
   .card-body {
     word-break: break-all;
-  }
-}
-
-.api-doc {
-  .route-list {
-    padding: 20px 0;
-    border-right: 2px dashed #ddd;
-    li {
-      line-height: 200%;
-      color: #999;
-      a:link,
-      a:visited {
-        color: #404040 !important;
-        text-decoration: underline !important;
-      }
-    }
-  }
-  .route {
-    margin-top: 1.25rem;
-    h5 {
-      color: #333;
-      border-bottom: 1px solid var(--gray);
-      margin: 0;
-      margin-bottom: 10px;
-      padding: 5px 0 0 0;
-      label {
-        font-size: 12px;
-        font-weight: normal;
-        display: inline-block;
-        width: 50px;
-        color: var(--gray);
-      }
-    }
-    .content {
-      margin: 0 1.25rem;
-    }
-    .desc {
-      h4 {
-        border: 0px;
-        font-size: 13px !important;
-        margin: 0;
-        color: #999;
-      }
-    }
-    h6 {
-      color: #999;
-    }
-    table.params {
-      td.field {
-        width: 80px;
-      }
-      td.type {
-        width: 70px;
-      }
-      td.required {
-        width: 50px;
-      }
-      td.values {
-        width: 180px;
-      }
-      td.default {
-        width: 100px;
-      }
-    }
   }
 }
 
@@ -1077,14 +1009,18 @@ textarea.div-dropzone-focus {
 }
 
 #reward-modal {
-  padding-top: 50px;
+  top: 30px;
   text-align: center;
   .modal-dialog {
     max-width: 750px;
     min-height: 300px;
   }
+  .reward-images {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-around;
+  }
   .reward-image {
-    display: inline-block;
     padding: 0px 20px 10px 20px;
   }
   .message {

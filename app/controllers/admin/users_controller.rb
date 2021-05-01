@@ -11,7 +11,7 @@ module Admin
       if params[:q].present?
         qstr = "%#{params[:q].downcase}%"
         scope = begin
-          case params[:field]
+          case field
           when "login"
             scope.where("lower(login) LIKE ?", qstr)
           when "email"
@@ -74,7 +74,10 @@ module Admin
         @user.destroy
       end
 
-      redirect_to(admin_users_url)
+      respond_to do |format|
+        format.js
+        format.html { redirect_to(edit_admin_user_url(@user.id)) }
+      end
     end
 
     def clean
@@ -84,11 +87,13 @@ module Admin
         _clean_replies
       when "topics"
         _clean_topics
+      when "photos"
+        _clean_photos
       end
     end
 
     def _clean_replies
-      # 为了避免误操作删除大量，限制一次清理 10 条，这个数字对刷垃圾回复的够用了。
+      # For avoid mistakenly deelete a lot of record, we limit delete 10 items.
       ids = Reply.unscoped.where(user_id: @user.id).recent.limit(10).pluck(:id)
       replies = Reply.unscoped.where(id: ids)
       topics = Topic.where(id: replies.collect(&:topic_id))
@@ -96,12 +101,19 @@ module Admin
       topics.each(&:touch)
 
       count = Reply.unscoped.where(user_id: @user.id).count
-      redirect_to edit_admin_user_path(@user.id), notice: "最近 10 条删除，成功 #{@user.login} 还有 #{count} 条回帖。"
+      redirect_to edit_admin_user_path(@user.id), notice: "Recent 10 replies has been deleted successfully, now #{@user.login} still #{count} replies"
     end
 
     def _clean_topics
       Topic.unscoped.where(user_id: @user.id).recent.limit(10).delete_all
-      redirect_to edit_admin_user_path(@user.id), notice: "最近 10 条删除成功。"
+      count = Topic.unscoped.where(user_id: @user.id).count
+      redirect_to edit_admin_user_path(@user.id), notice: "Recent 10 topics has been deleted successfully, now #{@user.login} still #{count} topics"
+    end
+
+    def _clean_photos
+      Photo.unscoped.where(user_id: @user.id).recent.limit(10).destroy_all
+      count = Photo.unscoped.where(user_id: @user.id).count
+      redirect_to edit_admin_user_path(@user.id), notice: "Recent 10 photos has been deleted successfully, now #{@user.login} still #{count} photos"
     end
   end
 end

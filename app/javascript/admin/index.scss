@@ -94,17 +94,47 @@ pre {
   }
 }
 
+table {
+  tr.user {
+    .username {
+      font-size: 14px;
+      a {
+        color: #555;
+      }
+    }
+  }
+  .description {
+    color: #999;
+  }
+  .time {
+    color: #aaa;
+  }
+  .info {
+    color: #aaa;
+
+    .badge {
+      color: var(--gray);
+      border-radius: 12px;
+      border: 1px solid var(--btn-default-border-color);
+      font-size: 12px;
+      font-weight: normal;
+    }
+  }
+}
+
 table tr.deleted td {
   text-decoration: line-through;
   color: #999 !important;
-  a {
+  a,
+  .description {
     color: #999 !important;
   }
 }
 table tr.ban td {
   text-decoration: line-through;
   color: #ccc !important;
-  a {
+  a,
+  .description {
     color: #ccc !important;
   }
 }
@@ -158,6 +188,35 @@ table tr td a.fa {
     .version {
       font-size: 14px;
       color: #aaa;
+    }
+  }
+}
+
+.photos {
+  display: flex;
+  flex-wrap: wrap;
+  columns: 4;
+  flex-direction: row;
+  justify-content: space-between;
+
+  .card {
+    border: 1px solid #e0e0e0;
+    width: 185px;
+    margin-bottom: 15px;
+    overflow: hidden;
+
+    .card-img-top {
+      img {
+        width: 185px;
+        height: 180px;
+        &:hover {
+          opacity: 0.8;
+        }
+      }
+    }
+
+    .card-body {
+      padding: 12px;
     }
   }
 }

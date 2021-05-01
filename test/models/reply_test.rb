@@ -27,7 +27,7 @@ class ReplyTest < ActiveSupport::TestCase
     r.body = "new body"
     refute_equal true, r.valid?
     assert_equal false, r.save
-    assert_includes r.errors.full_messages.join(""), "已关闭，不再接受回帖或修改回帖"
+    assert_includes r.errors.full_messages.join(""), "Topic has been closed, no longer accepting create or update replies."
   end
 
   test "should remove bas reply_to_id" do
@@ -190,7 +190,7 @@ class ReplyTest < ActiveSupport::TestCase
   test "#broadcast_to_client" do
     reply = create(:reply)
 
-    args = ["topics/#{reply.topic_id}/replies", { id: reply.id, user_id: reply.user_id, action: :create }]
+    args = ["topics/#{reply.topic_id}/replies", {id: reply.id, user_id: reply.user_id, action: :create}]
     ActionCable.server.expects(:broadcast).with(*args).once
     reply.broadcast_to_client
   end
@@ -207,19 +207,25 @@ class ReplyTest < ActiveSupport::TestCase
 
   test ".default_notification" do
     reply = create(:reply, topic: create(:topic))
+    t = Time.now
 
     val = {
       notify_type: "topic_reply",
       target_type: "Reply", target_id: reply.id,
       second_target_type: "Topic", second_target_id: reply.topic_id,
-      actor_id: reply.user_id
+      actor_id: reply.user_id,
+      created_at: t,
+      updated_at: t
     }
-    assert_equal val, reply.send(:default_notification)
+
+    Time.stub(:now, t) do
+      assert_equal val, reply.default_notification
+    end
   end
 
   test ".notification_receiver_ids" do
     mentioned_user_ids = [1, 2, 3]
-    user = create(:user, follower_ids: [2, 3, 5, 7, 9])
+    user = create(:user)
     topic = create(:topic, user_id: 10)
     reply = create(:reply, user: user, topic: topic, mentioned_user_ids: mentioned_user_ids)
 

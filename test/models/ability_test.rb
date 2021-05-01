@@ -9,7 +9,6 @@ class AbilityTest < ActiveSupport::TestCase
 
     assert ability.can?(:manage, Topic)
     assert ability.can?(:manage, Reply)
-    assert ability.can?(:manage, Section)
     assert ability.can?(:manage, Node)
     assert ability.can?(:manage, Photo)
     assert ability.can?(:manage, Comment)
@@ -23,7 +22,6 @@ class AbilityTest < ActiveSupport::TestCase
     assert ability.can?(:manage, Topic)
     assert ability.can?(:lock_node, Topic)
     assert ability.can?(:manage, Reply)
-    assert ability.can?(:manage, Section)
     assert ability.can?(:manage, Node)
     assert ability.can?(:create, Team)
   end
@@ -61,7 +59,6 @@ class AbilityTest < ActiveSupport::TestCase
     assert ability.can?(:update, reply)
     assert ability.can?(:destroy, reply)
   end
-
 
   test "Member" do
     user = create :avatar_user
@@ -105,9 +102,6 @@ class AbilityTest < ActiveSupport::TestCase
     assert ability.cannot?(:create, r)
     assert ability.cannot?(:update, r)
     assert ability.cannot?(:destroy, r)
-
-    # Section
-    assert ability.can?(:read, Section)
 
     # Photo
     assert ability.can?(:create, Photo)
