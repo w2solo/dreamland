@@ -76,6 +76,7 @@ Rails.application.routes.draw do
       get :last_reply
       get :banned
       get :excellent
+      get :newproduct
       get :favorites
       get :feed, defaults: {format: "xml"}
       post :preview

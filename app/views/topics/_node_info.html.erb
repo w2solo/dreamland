@@ -20,6 +20,9 @@
           <li class="<%= ' active' if action_name == 'index' %>">
             <a href="<%= main_app.topics_path %>" data-turbolinks-action="replace"><%= t("topics.topic_list.latest") %></a>
           </li>
+          <li class="<%= ' active' if action_name == 'newproduct' %>">
+            <a href="<%= main_app.newproduct_topics_path %>" data-turbolinks-action="replace"><%= t("topics.topic_list.newproduct") %></a>
+          </li>
           <li class="<%= ' active' if action_name == 'last' %>">
             <%= link_to(t("topics.topic_list.recent"), main_app.last_topics_path, data: { 'turbolinks-action': 'replace' }) %>
           </li>

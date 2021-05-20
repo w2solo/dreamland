@@ -206,6 +206,7 @@
     topic_has_been_banned_html: Topic has been banned by admin.
     topic_list:
       latest: "Latest"
+      newproduct: "NewProduct"
       recent: "Newest"
       last_reply: "Latest Reply"
       popular: "Popular"

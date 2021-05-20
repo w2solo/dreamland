@@ -214,6 +214,7 @@
       popular: "优质讨论"
       banned: "已屏蔽"
       excellent: "精华帖"
+      newproduct: "新品发布"
       latest: "默认"
     read_topic: "浏览话题"
     create_topic_success: "话题创建成功。"

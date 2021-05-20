@@ -47,6 +47,11 @@ module Topics
       render_index("excellent")
     end
 
+    def newproduct
+      @topics = topics_scope.where(node_id: 9).page(params[:page])
+      render_index("newproduct")
+    end
+
     private
 
     def render_index(name)
