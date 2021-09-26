@@ -59,6 +59,7 @@ module Api
       # ```
       def show
         @meta = {followed: false, liked: false, favorited: false}
+        @topic&.hits&.incr(1)
 
         if current_user
           # Create Notifications
