@@ -169,6 +169,7 @@ Rails.application.routes.draw do
       resources :users do
         collection do
           get :me
+          post :delete_user
         end
         member do
           get :topics

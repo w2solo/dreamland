@@ -188,6 +188,20 @@ module Api
         @scores = @scores.offset(params[:offset]).limit(params[:limit])
       end
 
+      # 删除用户账号
+      #
+      # POST /api/v3/users/delete_user
+      def delete_user
+        if current_user
+          if current_user.user_type == :user
+            current_user.soft_delete
+          else
+            current_user.destroy
+          end
+        end
+        render json: { ok: 1 }
+      end
+
       private
 
       def set_user
