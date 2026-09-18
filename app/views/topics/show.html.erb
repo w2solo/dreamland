@@ -1,4 +1,4 @@
-<% title_tag @topic.title, description: @topic.description %>
+<% title_tag @topic.product&.name || @topic.title, description: @topic.product&.tagline.presence || @topic.description %>
 <% content_for :scripts do %>
   <script type="text/javascript">
     Topics.topic_id = <%= @topic.id %>;
@@ -23,6 +23,9 @@
   <div class="col-lg-9">
     <div class="topic-detail card">
       <%= render partial: "topics/topic_info", locals: { topic: @topic, node: @node } %>
+      <% if @topic.product.present? %>
+        <%= render "topics/product_hero", product: @topic.product %>
+      <% end %>
       <% if @topic.excellent? %>
         <div class="label-awesome">
           <i class="fa fa-award awesome"></i> <%= t("topics.excellent_info_html") %>

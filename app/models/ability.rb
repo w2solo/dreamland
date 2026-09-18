@@ -31,6 +31,7 @@ class Ability
   # Normal user
   def roles_for_members
     roles_for_topics
+    roles_for_products
     roles_for_replies
     roles_for_comments
     roles_for_photos
@@ -55,6 +56,7 @@ class Ability
     can :create, Team
     can :manage, Node
     can :manage, Topic
+    can :manage, Product
     can :lock_node, Topic
     can :manage, Reply
   end
@@ -69,6 +71,13 @@ class Ability
     can :destroy, Topic do |topic|
       topic.user_id == user.id && topic.replies_count == 0
     end
+  end
+
+  def roles_for_products
+    unless user.newbie?
+      can :create, Product
+    end
+    can %i[update], Product, user_id: user.id
   end
 
   def roles_for_replies
@@ -112,6 +121,7 @@ class Ability
   def basic_read_only
     can %i[read feed node], Topic
     can %i[read reply_to], Reply
+    can :read, Product
     can :read, Photo
     can :read, Comment
     can :read, Team

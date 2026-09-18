@@ -34,6 +34,13 @@ class HomeController < ApplicationController
     render plain: "OK #{Time.now.iso8601}"
   end
 
+  def sitemap
+    @products = Product.launched.includes(:topic).by_launch.limit(2000)
+    @topics = Topic.without_ban.where("created_at > ?", 90.days.ago).recent.limit(2000)
+    expires_in 1.hour, public: true
+    render layout: false, content_type: "application/xml"
+  end
+
   def check_in
     if !@current_user.show_signin?
       render plain: "0"

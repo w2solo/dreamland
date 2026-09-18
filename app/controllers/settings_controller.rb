@@ -1,8 +1,8 @@
 # frozen_string_literal: true
 
 class SettingsController < ApplicationController
-  before_action :authenticate_user!
-  before_action :set_user
+  before_action :authenticate_user!, except: [:unsubscribe_weekly_digest]
+  before_action :set_user, except: [:unsubscribe_weekly_digest]
 
   def show
   end
@@ -18,6 +18,16 @@ class SettingsController < ApplicationController
   end
 
   def reward
+  end
+
+  def unsubscribe_weekly_digest
+    user = User.find_by_weekly_digest_token(params[:token].to_s)
+    if user
+      user.update_weekly_digest(false)
+      redirect_to root_path, notice: t("products.weekly_unsubscribed")
+    else
+      redirect_to root_path, alert: t("products.weekly_unsubscribe_invalid")
+    end
   end
 
   def update
@@ -84,6 +94,9 @@ class SettingsController < ApplicationController
     if @user.update(user_params)
       theme = params[:user][:theme]
       @user.update_theme(theme)
+      if params[:user].key?(:weekly_digest)
+        @user.update_weekly_digest(params[:user][:weekly_digest])
+      end
       redirect_to setting_path, notice: "更新成功"
     else
       render "show"

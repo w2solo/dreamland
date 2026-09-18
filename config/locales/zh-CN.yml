@@ -37,12 +37,18 @@
           hr: "#12ce0f"
           maintainer: "#c800cc"
           admin: "#f54821"
+      product:
+        status:
+          building: 开发中
+          shipped: 已上线
+          sunset: 已停更
     models:
       user: "用户"
       topic: "话题"
       post: 文章
       page: Wiki
       device: "设备"
+      product: "作品"
     attributes:
       user:
         name: "名字"
@@ -94,6 +100,13 @@
         node_id: "节点"
         team_id: "关联到组织"
         body: "正文"
+      product:
+        name: "产品名称"
+        tagline: "一句话介绍"
+        url: "产品链接"
+        cover: "封面"
+        status: "状态"
+        body: "故事"
       reply:
         body: "回复内容"
       page:
@@ -112,6 +125,11 @@
         summary: 简介
     errors:
       models:
+        product:
+          attributes:
+            url:
+              invalid_product_url: 请填写以 http:// 或 https:// 开头的链接
+              taken: 你已经上架过这个链接
         user:
           attributes:
             reset_password_token:

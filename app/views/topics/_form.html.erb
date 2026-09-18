@@ -5,7 +5,7 @@
   <div class="form-group">
     <div class="input-group">
       <div class="input-group-prepend mr-1">
-        <%= f.select :node_id, Node.sorted.name_options, {}, class: "bootstrap-select", data: { "live-search": true } %>
+        <%= f.select :node_id, Node.topic_form_options, {}, class: "bootstrap-select", data: { "live-search": true } %>
       </div>
       <%= f.text_field :title, class: "form-control", placeholder: t("topics.form.title_placeholder") %>
     </div>
@@ -14,7 +14,7 @@
   <%= render "/shared/editor_toolbar" %>
 
   <div class="form-group">
-    <%= f.text_area :body, class: "topic-editor form-control", rows: 20 %>
+    <%= f.text_area :body, class: "topic-editor form-control", rows: 20, placeholder: topic_intent_placeholder(@intent) %>
   </div>
 
   <% if Setting.has_module?(:team) %>

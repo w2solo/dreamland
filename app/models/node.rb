@@ -13,6 +13,24 @@ class Node < ApplicationRecord
 
   form_select :name
 
+  def self.topic_form_options
+    sorted.where.not(id: Setting.product_node_id.to_i).name_options
+  end
+
+  def self.suggested_for_intent(intent)
+    names = {
+      "review" => %w[心得总结 复盘],
+      "help" => %w[聊天讨论 求助]
+    }[intent.to_s]
+    return if names.blank?
+
+    names.each do |name|
+      node = find_by(name: name)
+      return node if node
+    end
+    nil
+  end
+
   def self.find_builtin_node(id, name)
     node = find_by_id(id)
     return node if node

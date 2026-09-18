@@ -1,0 +1,39 @@
+<% title_tag @digest.title %>
+
+<div class="weekly-page">
+  <div class="card">
+    <div class="card-body">
+      <h1><%= @digest.title %></h1>
+      <p class="text-muted"><%= l(@digest.beginning) %> – <%= l(@digest.ending) %></p>
+      <p>
+        <%= link_to t("products.weekly_rss"), weekly_path(format: :rss) %>
+        ·
+        <%= link_to t("products.view_all"), products_path %>
+      </p>
+    </div>
+  </div>
+
+  <div class="products-section">
+    <h2 class="products-section-title"><%= t("products.this_week") %></h2>
+    <% if @digest.products.present? %>
+      <div class="product-grid">
+        <%= render ProductComponent.with_collection(@digest.products) %>
+      </div>
+    <% else %>
+      <div class="card"><div class="card-body text-muted"><%= t("products.empty") %></div></div>
+    <% end %>
+  </div>
+
+  <div class="products-section">
+    <h2 class="products-section-title"><%= t("weeklies.excellent") %></h2>
+    <div class="topics card">
+      <div class="card-body item-list">
+        <% if @digest.excellent_topics.present? %>
+          <%= render TopicComponent.with_collection(@digest.excellent_topics) %>
+        <% else %>
+          <div class="text-muted"><%= t("weeklies.no_excellent") %></div>
+        <% end %>
+      </div>
+    </div>
+  </div>
+</div>

@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+  <url>
+    <loc><%= root_url %></loc>
+    <changefreq>daily</changefreq>
+  </url>
+  <url>
+    <loc><%= products_url %></loc>
+    <changefreq>daily</changefreq>
+  </url>
+  <% @products.each do |product| %>
+    <% next if product.topic.blank? %>
+    <url>
+      <loc><%= topic_url(product.topic) %></loc>
+      <lastmod><%= (product.updated_at || product.launched_at).xmlschema %></lastmod>
+    </url>
+  <% end %>
+  <% @topics.each do |topic| %>
+    <url>
+      <loc><%= topic_url(topic) %></loc>
+      <lastmod><%= topic.updated_at.xmlschema %></lastmod>
+    </url>
+  <% end %>
+</urlset>

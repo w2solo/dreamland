@@ -18,6 +18,13 @@ Rails.application.routes.draw do
     path: /[\w\d.\/\-]+/i
   }
   get "status", to: "home#status"
+  get "sitemap.xml", to: "home#sitemap", as: :sitemap
+  get "weekly", to: "weeklies#show", as: :weekly
+  get "weekly.rss", to: "weeklies#show", defaults: {format: :rss}
+  get "weekly/:id", to: "weeklies#show", as: :weekly_issue, constraints: {id: /\d{4}-w\d{1,2}/i}
+  get "setting/weekly_digest/unsubscribe", to: "settings#unsubscribe_weekly_digest", as: :unsubscribe_weekly_digest
+
+  resources :products, except: %i[destroy]
 
   devise_for :users, path: "account", controllers: {
     registrations: "users/registrations",

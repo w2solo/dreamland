@@ -53,6 +53,21 @@ module TopicsHelper
     content_tag(:i, "", title: t("topics.closed_tooltip"), class: "fa fa-check-circle", data: {toggle: "tooltip"})
   end
 
+  def topic_intent_placeholder(intent)
+    case intent.to_s
+    when "review"
+      t("topics.intent.review_placeholder")
+    when "help"
+      t("topics.intent.help_placeholder")
+    end
+  end
+
+  def topic_compose_node_id
+    return if @node.blank?
+    return if @node.id == Setting.product_node_id.to_i
+    @node.id
+  end
+
   def render_node_name(node)
     return "" if node.blank?
     link_to(node.name, main_app.node_topics_path(node.id), class: "node")

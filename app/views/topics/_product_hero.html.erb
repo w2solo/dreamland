@@ -1,0 +1,28 @@
+<div class="product-hero">
+  <div class="product-hero-cover">
+    <% if product.cover.present? %>
+      <span class="product-card-cover-image" style="background-image: url(<%= product.cover.url(:large) %>)"></span>
+    <% else %>
+      <span class="product-card-cover-fallback"><%= product.name_initial %></span>
+    <% end %>
+  </div>
+  <div class="product-hero-body">
+    <div class="product-hero-status"><%= t("activerecord.enums.product.status.#{product.status}") %></div>
+    <h2 class="product-hero-name"><%= product.name %></h2>
+    <% if product.tagline.present? %>
+      <p class="product-hero-tagline"><%= product.tagline %></p>
+    <% end %>
+    <div class="product-hero-meta">
+      <%= user_avatar_tag(product.user, :sm) %>
+      <%= user_name_tag(product.user) %>
+    </div>
+    <div class="product-hero-actions">
+      <% if product.visit_url? %>
+        <%= link_to t("products.open_product"), product.url, class: "btn btn-primary", target: "_blank", rel: "nofollow noopener" %>
+      <% end %>
+      <% if can?(:update, product) %>
+        <%= link_to t("products.edit_title"), edit_product_path(product), class: "btn btn-default" %>
+      <% end %>
+    </div>
+  </div>
+</div>

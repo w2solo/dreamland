@@ -1,0 +1,54 @@
+<%= form_for @product, html: { multipart: true, class: "form product-form" } do |f| %>
+  <%= render "shared/error_messages", target: @product %>
+  <%= f.hidden_field :cover_cache %>
+
+  <div class="form-group">
+    <label class="control-label"><%= t("activerecord.attributes.product.cover") %></label>
+    <label class="product-cover-uploader">
+      <div class="product-cover-preview <%= "has-image" if @product.cover.present? %>" <% if @product.cover.present? %>style="background-image: url(<%= @product.cover.url(:large) %>)"<% end %>>
+        <span class="product-cover-placeholder"><%= t("products.cover_placeholder") %></span>
+      </div>
+      <%= f.file_field :cover, class: "product-cover-input", accept: "image/*" %>
+    </label>
+  </div>
+
+  <div class="form-group">
+    <label class="control-label"><%= t("activerecord.attributes.product.name") %></label>
+    <%= f.text_field :name, class: "form-control", maxlength: 40, placeholder: t("products.name_placeholder") %>
+  </div>
+
+  <div class="form-group">
+    <label class="control-label"><%= t("activerecord.attributes.product.tagline") %></label>
+    <%= f.text_field :tagline, class: "form-control", maxlength: 80, placeholder: t("products.tagline_placeholder") %>
+  </div>
+
+  <div class="form-group">
+    <label class="control-label"><%= t("activerecord.attributes.product.url") %></label>
+    <%= f.url_field :url, class: "form-control", placeholder: "https://" %>
+  </div>
+
+  <div class="form-group">
+    <label class="control-label"><%= t("activerecord.attributes.product.status") %></label>
+    <div class="product-status-pills">
+      <% Product.statuses.keys.each do |status| %>
+        <label class="product-status-pill">
+          <%= f.radio_button :status, status %>
+          <span><%= t("activerecord.enums.product.status.#{status}") %></span>
+        </label>
+      <% end %>
+    </div>
+  </div>
+
+  <div class="form-group">
+    <label class="control-label"><%= t("activerecord.attributes.product.body") %></label>
+    <%= render "/shared/editor_toolbar" %>
+    <%= f.text_area :body, class: "topic-editor form-control", rows: 16, value: @product.body.presence || @product.topic&.body, placeholder: t("products.story_placeholder") %>
+  </div>
+
+  <div class="form-actions hide-ios">
+    <%= f.submit t("products.publish"), class: "btn btn-primary", data: { disable_with: t("common.saving") } %>
+    <div class="pull-right hide-ios">
+      <a href="/markdown" target="_blank"><i class="fa fa-life-ring"></i> <%= t("topics.form.markdown_guides") %></a>
+    </div>
+  </div>
+<% end %>

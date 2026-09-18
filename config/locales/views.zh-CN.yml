@@ -113,6 +113,7 @@
     edit_account_path: "个人设置"
     likes: "你收藏的话题"
     teams: "公司／组织"
+    products: "造船台"
     back_to_front: "回到前台"
   comments:
     create_comment: "发表评论"
@@ -124,6 +125,9 @@
     welcome_title: "欢迎加入 %{app_name}"
     you_have_successfully: "你已经成功在"
     registered_an_account: "注册了账号。"
+    weekly_digest_subject: "%{title} · %{app_name}"
+    weekly_digest_title: "%{title}"
+    weekly_digest_intro: "本周独立开发者们上架的作品和精华讨论。"
   rss:
     recent_topics_description: "%{name}社区最新发帖."
     recent_topics_title: "%{name}社区"
@@ -135,6 +139,7 @@
     admin_emails: "管理员 Email，在此名单的将有管理员权限（一行一个）"
     reject_newbie_reply_in_the_evening: "禁止新手在晚上回帖"
     node_ids_hide_in_topics_index: "要在论坛首页列表隐藏的节点,以逗号隔开"
+    product_node_id: "造船台对应的节点 ID"
     default_locale: "默认语言 可选值: [zh-CN, en]"
     auto_locale: "是否自动根据用户浏览器语言来切换显示语言 [true | false]"
     custom_head_html: "自定 HTML head 区域的内容"
@@ -216,7 +221,7 @@
       popular: "优质讨论"
       banned: "已屏蔽"
       excellent: "精华帖"
-      newproduct: "新品发布"
+      newproduct: "造船台"
       latest: "默认"
     read_topic: "浏览话题"
     create_topic_success: "话题创建成功。"
@@ -257,6 +262,26 @@
       title_placeholder: 在这里输入标题
       no_team: 不关联组织
       markdown_guides: 排版说明
+    intent:
+      title: 你想发什么？
+      description: 作品请走造船台，讨论请选择对应类型。
+      product: 发布作品
+      product_hint: 封面、链接、一句话，出现在造船台
+      review: 复盘
+      review_hint: 写做了什么、数据和下次会改什么
+      help: 求助
+      help_hint: 说明目标用户、想验证的假设和可体验链接
+      chat: 闲聊
+      chat_hint: 日常讨论、提问、分享
+      go_launch_html: 要上架产品？请走 <a href="%{url}">发布作品</a>
+      review_placeholder: |
+        做了什么：
+        关键数据：
+        下次会改什么：
+      help_placeholder: |
+        目标用户：
+        想验证的假设：
+        可体验链接：
     menu:
       pin: 置顶话题
       unpin: 取消话题置顶
@@ -390,3 +415,42 @@
     followed_you: "%{actor} 关注了你。"
     mentioned_you: "%{actor} 提及了你。"
     node_changed: "你创建的话题被调整到了 %{node} 节点。"
+  products:
+    new_title: 发布作品
+    edit_title: 编辑作品
+    publish: 发布到造船台
+    create_success: 作品已发布到造船台。
+    update_success: 作品已更新。
+    use_launch_form: 作品请通过造船台上架。
+    this_week: 本周造船
+    earlier: 更早
+    empty: 还没有作品
+    view_all: 查看全部
+    visit: 访问
+    open_product: 打开产品
+    cover_placeholder: 产品截图或 Logo
+    name_placeholder: 产品名称
+    tagline_placeholder: 用一句话介绍它解决什么问题
+    story_placeholder: |
+      解决什么问题：
+      给谁用：
+      现在进展：
+      想得到什么反馈：
+    how_to_launch: 如何上架
+    how_to_launch_step1: 准备可访问的产品链接和一张封面
+    how_to_launch_step2: 写清一句话介绍和故事
+    how_to_launch_step3: 发布后会出现在造船台和本周列表
+    maker_products: 作品
+    publish_first: 发布第一个作品
+    products_count_html: <span>%{count}</span> 个作品
+    weekly_digest_opt_in: 每周一发送造船周报
+    weekly_rss: RSS
+    weekly_unsubscribed: 已取消造船周报邮件。
+    weekly_unsubscribe_invalid: 退订链接无效或已过期。
+    weekly_unsubscribe: 取消订阅周报
+  weeklies:
+    title: "%{year} 年第 %{week} 周造船周报"
+    excellent: 本周精华
+    no_excellent: 本周还没有精华帖
+    rss_description: "%{name} 本周作品与精华讨论"
+

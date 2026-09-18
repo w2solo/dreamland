@@ -1,0 +1,22 @@
+<div class="intent-picker">
+  <h2 class="intent-picker-title"><%= t("topics.intent.title") %></h2>
+  <p class="intent-picker-desc"><%= t("topics.intent.description") %></p>
+  <div class="intent-grid">
+    <%= link_to new_product_path, class: "intent-card" do %>
+      <strong><%= t("topics.intent.product") %></strong>
+      <span><%= t("topics.intent.product_hint") %></span>
+    <% end %>
+    <%= link_to new_topic_path(intent: "review"), class: "intent-card" do %>
+      <strong><%= t("topics.intent.review") %></strong>
+      <span><%= t("topics.intent.review_hint") %></span>
+    <% end %>
+    <%= link_to new_topic_path(intent: "help"), class: "intent-card" do %>
+      <strong><%= t("topics.intent.help") %></strong>
+      <span><%= t("topics.intent.help_hint") %></span>
+    <% end %>
+    <%= link_to new_topic_path(intent: "chat"), class: "intent-card" do %>
+      <strong><%= t("topics.intent.chat") %></strong>
+      <span><%= t("topics.intent.chat_hint") %></span>
+    <% end %>
+  </div>
+</div>

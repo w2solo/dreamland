@@ -8,6 +8,21 @@
 
     <%= render "info" %>
 
+    <% if @products.present? || owner?(@user) %>
+      <div class="card user-products">
+        <div class="card-header"><%= t("products.maker_products") %></div>
+        <div class="card-body">
+          <% if @products.present? %>
+            <div class="product-grid product-grid-compact">
+              <%= render ProductComponent.with_collection(@products, variant: "compact") %>
+            </div>
+          <% elsif owner?(@user) %>
+            <%= link_to t("products.publish_first"), new_product_path, class: "btn btn-primary" %>
+          <% end %>
+        </div>
+      </div>
+    <% end %>
+
     <div class="topics topics-<%= action_name %> card">
       <div class="card-body item-list">
         <%= render TopicComponent.with_collection(@topics) %>

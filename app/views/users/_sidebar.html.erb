@@ -95,6 +95,12 @@
           <%= @user.tagline %>
         </div>
       <% end %>
+      <% if @user.bio.present? %>
+        <div class="user-bio"><%= @user.bio %></div>
+      <% end %>
+      <div class="item counts">
+        <%= t("products.products_count_html", count: @user.products.count) %>
+      </div>
       <div class="buttons">
         <%= reward_user_tag(@user, class: "btn btn-block btn-default") %>
       </div>

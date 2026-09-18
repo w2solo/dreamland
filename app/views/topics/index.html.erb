@@ -4,6 +4,17 @@
 <!-- @suggest_topics maybe nil or ActiveRecord::Relation, but we need an array -->
 <% @suggest_topics = @suggest_topics.to_a %>
 <%= render "topics/node_info", node: @node %>
+<% if action_name == "index" && @weekly_products.present? %>
+  <div class="weekly-strip">
+    <div class="weekly-strip-header">
+      <h2><%= t("products.this_week") %></h2>
+      <%= link_to t("products.view_all"), products_path %>
+    </div>
+    <div class="product-grid product-grid-strip">
+      <%= render ProductComponent.with_collection(@weekly_products) %>
+    </div>
+  </div>
+<% end %>
 <div class="row">
   <div class="col-lg-9">
     <div class="topics topics-<%= action_name %> card">

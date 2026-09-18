@@ -18,6 +18,7 @@ class User < ApplicationRecord
 
   has_one :profile, dependent: :destroy
   has_many :topics, dependent: :destroy
+  has_many :products, dependent: :destroy
   has_many :replies, dependent: :destroy
   has_many :authorizations, dependent: :destroy
   has_many :notifications, dependent: :destroy
@@ -40,6 +41,13 @@ class User < ApplicationRecord
 
   scope :hot, -> { order(replies_count: :desc).order(topics_count: :desc) }
   scope :without_team, -> { where(type: nil) }
+  scope :digest_recipients, -> {
+    left_joins(:profile)
+      .without_team
+      .where.not(state: [:deleted, :blocked])
+      .where.not(email: [nil, ""])
+      .where("profiles.id IS NULL OR COALESCE(profiles.preferences->>'weekly_digest', 'true') != 'false'")
+  }
   scope :fields_for_list, lambda {
     select(:type, :id, :name, :login, :email, :email_md5, :email_public,
       :avatar, :state, :tagline, :github, :website, :location,

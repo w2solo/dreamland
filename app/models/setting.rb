@@ -78,6 +78,7 @@ class Setting < RailsSettings::Base
     github_api_secret
     wechat_api_key
     wechat_api_secret
+    product_node_id
   ]
 
   # = System
@@ -181,7 +182,10 @@ class Setting < RailsSettings::Base
   field :ban_reasons, default: "标题或正文描述不清楚", type: :array, separator: /\n+/
   field :ban_reason_html, default: "此贴因内容原因不符合要求，被管理员屏蔽，请根据管理员给出的原因进行调整"
   field :ban_words_on_reply, default: [], type: :array, separator: /\n+/
-  field :ban_words_in_body, default: [], type: :array, separator: /\n+/
+  MARKETING_BAN_WORDS = %w[中转 源码搭建 交友系统].freeze
+
+  field :ban_words_in_body, default: MARKETING_BAN_WORDS, type: :array, separator: /\n+/
+  field :product_node_id, type: :integer, default: 9
   field :newbie_notices, default: ""
   field :tips, default: [], type: :array, separator: /\n+/
   field :editor_languages, default: %w[rb go js py java rs php css html yml json xml], type: :array, separator: /[\s,]+/
@@ -297,6 +301,11 @@ class Setting < RailsSettings::Base
       self.sign_up_daily_limit = 5 if sign_up_daily_limit.to_i == 0
       self.reject_newbie_reply_in_the_evening = true unless reject_newbie_reply_in_the_evening?
       self.rack_attack = {limit: 300, period: 300} if rack_attack_limit <= 0
+      self.ban_words_in_body = MARKETING_BAN_WORDS if ban_words_in_body.blank?
+    end
+
+    def product_node
+      Node.find_by(id: product_node_id.to_i)
     end
 
     private

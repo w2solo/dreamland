@@ -9,13 +9,26 @@
 
 <div class="card sidebar-cta">
   <div class="card-body">
-    <%= link_to t('topics.new_topic'), main_app.new_topic_path(node: @node&.id), class: 'btn btn-primary btn-block' %>
+    <%= link_to t("products.new_title"), main_app.new_product_path, class: "btn btn-primary btn-block" %>
+    <%= link_to t("topics.new_topic"), main_app.new_topic_path(node: topic_compose_node_id), class: "btn btn-default btn-block" %>
     <% if current_user && current_user.show_signin? %><button class="btn btn-success check-in btn-block">签到</button><% end %>
   </div>
 </div>
 <% end %>
 
 <%= render "topics/sidebar_box_tips" %>
+
+<% if @sidebar_products.present? %>
+  <div class="card sidebar-products">
+    <div class="card-header"><%= t("products.this_week") %></div>
+    <div class="card-body">
+      <%= render ProductComponent.with_collection(@sidebar_products, variant: "compact") %>
+      <div class="text-center mt-2">
+        <%= link_to t("products.view_all"), products_path %>
+      </div>
+    </div>
+  </div>
+<% end %>
 
 <%= raw Setting.topic_index_sidebar_html %>
 

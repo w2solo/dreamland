@@ -43,6 +43,19 @@
                       <%= f.text_field :tagline, class: "form-control" %>
                     </div>
                   <% end %>
+
+                  <div class="form-group">
+                    <%= f.label :bio %>
+                    <%= f.text_area :bio, class: "form-control", rows: 4, placeholder: t("users.bios") %>
+                  </div>
+
+                  <div class="form-group form-check">
+                    <%= hidden_field_tag "user[weekly_digest]", "0" %>
+                    <label class="form-check-label">
+                      <%= check_box_tag "user[weekly_digest]", "1", @user.weekly_digest?, class: "form-check-input" %>
+                      <%= t("products.weekly_digest_opt_in") %>
+                    </label>
+                  </div>
               </div>
 
               <div class="card-section themes">

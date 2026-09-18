@@ -48,8 +48,7 @@ module Topics
     end
 
     def newproduct
-      @topics = topics_scope.where(node_id: 9).recent.page(params[:page])
-      render_index("newproduct")
+      redirect_to products_path, status: :moved_permanently
     end
 
     private

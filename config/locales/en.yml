@@ -31,11 +31,17 @@ en:
           hr: "#12ce0f"
           maintainer: "#c800cc"
           admin: "#f54821"
+      product:
+        status:
+          building: Building
+          shipped: Shipped
+          sunset: Sunset
     models:
       user: "User"
       topic: "Topic"
       post: "Post"
       page: "Wiki"
+      product: "Product"
     attributes:
       user:
         name: "Name"
@@ -77,6 +83,13 @@ en:
         user_id: "User"
         node_id: "Node"
         body: "Content"
+      product:
+        name: "Name"
+        tagline: "Tagline"
+        url: "URL"
+        cover: "Cover"
+        status: "Status"
+        body: "Story"
       reply:
         body: "Reply Content"
       page:

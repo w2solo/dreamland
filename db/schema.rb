@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2021_04_09_032709) do
+ActiveRecord::Schema.define(version: 2026_09_18_131000) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_stat_statements"
@@ -244,6 +244,22 @@ ActiveRecord::Schema.define(version: 2021_04_09_032709) do
     t.jsonb "rewards", default: {}, null: false
     t.jsonb "preferences", default: {}, null: false
     t.index ["user_id"], name: "index_profiles_on_user_id", unique: true
+  end
+
+  create_table "products", force: :cascade do |t|
+    t.integer "user_id", null: false
+    t.integer "topic_id"
+    t.string "name", limit: 40, null: false
+    t.string "tagline", limit: 80
+    t.string "url"
+    t.string "cover"
+    t.integer "status", default: 1, null: false
+    t.datetime "launched_at"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["launched_at"], name: "index_products_on_launched_at"
+    t.index ["topic_id"], name: "index_products_on_topic_id", unique: true
+    t.index ["user_id"], name: "index_products_on_user_id"
   end
 
   create_table "replies", id: :serial, force: :cascade do |t|

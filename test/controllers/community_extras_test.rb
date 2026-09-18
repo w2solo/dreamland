@@ -1,0 +1,66 @@
+# frozen_string_literal: true
+
+require "spec_helper"
+
+describe HomeController do
+  let(:user) { create :user }
+
+  setup do
+    Setting.stubs(:ban_words_in_body).returns([])
+  end
+
+  describe "GET /sitemap.xml" do
+    it "includes products and recent topics" do
+      product = create(:product, user: user)
+      topic = create(:topic, user: user)
+      get sitemap_path
+      assert_equal 200, response.status
+      assert_includes response.body, topic_url(product.topic)
+      assert_includes response.body, topic_url(topic)
+    end
+  end
+end
+
+describe TopicsController do
+  let(:user) { create :user }
+
+  setup do
+    Setting.stubs(:ban_words_in_body).returns([])
+  end
+
+  describe "GET /topics/new intents" do
+    it "shows intent picker" do
+      sign_in user
+      get new_topic_path
+      assert_equal 200, response.status
+      assert_includes response.body, I18n.t("topics.intent.product")
+    end
+
+    it "redirects product node to launch form" do
+      sign_in user
+      Setting.stubs(:product_node_id).returns(9)
+      get new_topic_path, params: {node: 9}
+      assert_redirected_to new_product_path
+    end
+
+    it "shows form for chat intent" do
+      sign_in user
+      get new_topic_path, params: {intent: "chat"}
+      assert_equal 200, response.status
+      assert_includes response.body, 'tb="edit-topic"'
+    end
+  end
+end
+
+describe SettingsController do
+  let(:user) { create :user }
+
+  describe "GET /setting/weekly_digest/unsubscribe" do
+    it "turns off digest without login" do
+      token = user.weekly_digest_token
+      get unsubscribe_weekly_digest_path, params: {token: token}
+      assert_redirected_to root_path
+      assert_equal false, user.reload.weekly_digest?
+    end
+  end
+end

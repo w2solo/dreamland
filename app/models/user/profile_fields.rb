@@ -7,8 +7,18 @@ class User
     included do
       delegate :contacts, to: :profile, allow_nil: true
       delegate :theme, to: :profile, allow_nil: true
+      delegate :weekly_digest, to: :profile, allow_nil: true
 
       before_save :store_location
+    end
+
+    class_methods do
+      def find_by_weekly_digest_token(token)
+        user_id = Rails.application.message_verifier(:weekly_digest).verify(token)
+        find_by(id: user_id)
+      rescue ActiveSupport::MessageVerifier::InvalidSignature
+        nil
+      end
     end
 
     def profile_field(field)
@@ -26,6 +36,20 @@ class User
     def update_theme(value)
       create_profile if profile.blank?
       profile.update(theme: value)
+    end
+
+    def weekly_digest?
+      weekly_digest.to_s != "false"
+    end
+
+    def update_weekly_digest(value)
+      create_profile if profile.blank?
+      enabled = ActiveModel::Type::Boolean.new.cast(value)
+      profile.update(weekly_digest: enabled ? "true" : "false")
+    end
+
+    def weekly_digest_token
+      Rails.application.message_verifier(:weekly_digest).generate(id)
     end
 
     def update_profile_fields(field_values)

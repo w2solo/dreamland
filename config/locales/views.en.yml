@@ -112,6 +112,7 @@
     edit_account_path: "Settings"
     likes: "Your favorites"
     teams: "Teams"
+    products: "Launchpad"
     back_to_front: "Back to front"
   comments:
     create_comment: "Comment"
@@ -123,6 +124,9 @@
     welcome_title: "Welcome to %{app_name}"
     you_have_successfully: "You have successfully registered an account in"
     registered_an_account: "."
+    weekly_digest_subject: "%{title} · %{app_name}"
+    weekly_digest_title: "%{title}"
+    weekly_digest_intro: "Products launched this week and excellent discussions."
   rss:
     recent_topics_description: "Recent Topics in %{name} Forum."
     recent_topics_title: "%{name} Forum"
@@ -134,6 +138,7 @@
     admin_emails: "Admin emails, in this list email who will get the admin role."
     reject_newbie_reply_in_the_evening: "Disallow newbie replying at night."
     node_ids_hide_in_topics_index: "Node ids hide in topic list (Split with comma)."
+    product_node_id: "Node id used by Launchpad"
     default_locale: "User default language [zh-CN, en]"
     auto_locale: "Enable auto switch language by user browser setting. [true | false]"
     custom_head_html: "Customize HTML in head."
@@ -208,7 +213,7 @@
     topic_has_been_banned_html: Topic has been banned by admin.
     topic_list:
       latest: "Latest"
-      newproduct: "NewProduct"
+      newproduct: "Launchpad"
       recent: "Newest"
       last_reply: "Latest Reply"
       popular: "Popular"
@@ -250,6 +255,26 @@
       title_placeholder: Type a topic title
       no_team: No team
       markdown_guides: Markdown Guides
+    intent:
+      title: What do you want to post?
+      description: Launch a product on Launchpad, or pick a discussion type.
+      product: Launch product
+      product_hint: Cover, URL and a one-liner
+      review: Retrospective
+      review_hint: What you shipped, numbers, what you would change
+      help: Ask for help
+      help_hint: Audience, hypothesis, and a link to try
+      chat: Chat
+      chat_hint: General discussion
+      go_launch_html: Shipping a product? Use <a href="%{url}">Launch product</a>
+      review_placeholder: |
+        What we shipped:
+        Key numbers:
+        What we would change:
+      help_placeholder: |
+        Target user:
+        Hypothesis to validate:
+        Link to try:
     menu:
       pin: Pin
       unpin: Unpin
@@ -383,3 +408,42 @@
     followed_you: "%{actor} has been followed you."
     mentioned_you: "%{actor} mentioned you."
     node_changed: "Your topic has moved into %{node} node."
+  products:
+    new_title: Launch product
+    edit_title: Edit product
+    publish: Publish to Launchpad
+    create_success: Product published.
+    update_success: Product updated.
+    use_launch_form: Please launch products from Launchpad.
+    this_week: This week's ships
+    earlier: Earlier
+    empty: No products yet
+    view_all: View all
+    visit: Visit
+    open_product: Open product
+    cover_placeholder: Screenshot or logo
+    name_placeholder: Product name
+    tagline_placeholder: One sentence about the problem it solves
+    story_placeholder: |
+      Problem:
+      Who it is for:
+      Current status:
+      Feedback needed:
+    how_to_launch: How to launch
+    how_to_launch_step1: Prepare a live URL and a cover image
+    how_to_launch_step2: Write a tagline and story
+    how_to_launch_step3: It will show up on Launchpad and this week's list
+    maker_products: Products
+    publish_first: Launch your first product
+    products_count_html: <span>%{count}</span> products
+    weekly_digest_opt_in: Email me the weekly ship digest
+    weekly_rss: RSS
+    weekly_unsubscribed: Weekly digest emails have been turned off.
+    weekly_unsubscribe_invalid: Unsubscribe link is invalid.
+    weekly_unsubscribe: Unsubscribe
+  weeklies:
+    title: "Week %{week}, %{year} ship digest"
+    excellent: Excellent this week
+    no_excellent: No excellent topics this week
+    rss_description: "%{name} weekly products and excellent topics"
+

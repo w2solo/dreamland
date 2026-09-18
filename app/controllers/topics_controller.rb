@@ -20,6 +20,8 @@ class TopicsController < ApplicationController
     if current_user
       @read_topic_ids = current_user.filter_readed_topics(@topics + @suggest_topics)
     end
+    @weekly_products = Product.this_week.includes(:user, :topic).limit(6)
+    @sidebar_products = Product.launched.includes(:user, :topic).by_launch.limit(5)
   end
 
   def feed
@@ -42,7 +44,7 @@ class TopicsController < ApplicationController
   end
 
   def show
-    @topic = Topic.unscoped.includes(:user).find(params[:id])
+    @topic = Topic.unscoped.includes(:user, :product).find(params[:id])
     render_404 if @topic.deleted?
 
     @node = @topic.node
@@ -63,11 +65,22 @@ class TopicsController < ApplicationController
   end
 
   def new
+    if params[:node].to_i == Setting.product_node_id.to_i || params[:intent] == "product"
+      redirect_to new_product_path
+      return
+    end
+
     @topic = Topic.new(user_id: current_user.id)
+    @intent = params[:intent].presence
     unless params[:node].blank?
       @topic.node_id = params[:node]
       @node = Node.find_by_id(params[:node])
       render_404 if @node.blank?
+    end
+
+    if @intent.present?
+      suggested = Node.suggested_for_intent(@intent)
+      @topic.node_id = suggested.id if suggested && @topic.node_id.blank?
     end
   end
 
@@ -80,6 +93,10 @@ class TopicsController < ApplicationController
     @topic.user_id = current_user.id
     @topic.node_id = params[:node] || topic_params[:node_id]
     @topic.team_id = ability_team_id
+    if @topic.node_id.to_i == Setting.product_node_id.to_i
+      redirect_to new_product_path, alert: t("products.use_launch_form")
+      return
+    end
     current_user.change_score(:create_topic) if @topic.save
   end
 

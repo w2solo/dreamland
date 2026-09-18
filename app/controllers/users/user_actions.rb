@@ -85,6 +85,7 @@ module Users
     def user_show
       @topics = @user.topics.fields_for_list.high_likes.page(params[:page])
       @replies = @user.replies.without_system.fields_for_list.recent.includes(:topic).limit(10)
+      @products = @user.products.launched.includes(:topic, :user).by_launch
     end
   end
 end

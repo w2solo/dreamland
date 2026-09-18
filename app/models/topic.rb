@@ -22,6 +22,7 @@ class Topic < ApplicationRecord
   belongs_to :last_reply_user, class_name: "User", required: false
   belongs_to :last_reply, class_name: "Reply", required: false
   has_many :replies, dependent: :destroy
+  has_one :product, dependent: :destroy
 
   validates :user_id, :title, :body, :node_id, presence: true
 

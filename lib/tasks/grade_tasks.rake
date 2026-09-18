@@ -13,6 +13,7 @@ namespace :grade do
     Grade::Rule.create(action: "creat_comment", message: "发布评论", score: 2, change_type: :increase)
     Grade::Rule.create(action: "delete_comment", message: "删除评论", score: 2, change_type: :decrease)
     Grade::Rule.create(action: "comment_break_rule", message: "评论违规", score: 10, change_type: :decrease)
+    Grade::Rule.create(action: "create_product", message: "发布作品", score: 15, change_type: :increase)
   end
 
   desc "初始化积分"

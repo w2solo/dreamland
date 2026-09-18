@@ -30,7 +30,7 @@ const AppView = Backbone.View.extend({
 
     if (
       ((needle = $("body").data("controller-name")),
-      ["topics", "replies"].includes(needle))
+      ["topics", "replies", "products"].includes(needle))
     ) {
       window._topicView = new TopicView({ parentView: this });
     }
@@ -61,7 +61,7 @@ const AppView = Backbone.View.extend({
     $(window).on("blur.inactive focus.inactive", this.updateWindowActiveState);
 
     // Likeable Popover
-    return $("a.likeable[data-count!=0]").tooltipster({
+    $("a.likeable[data-count!=0]").tooltipster({
       content: "Loading...",
       theme: "tooltipster-shadow",
       side: "bottom",
@@ -98,6 +98,20 @@ const AppView = Backbone.View.extend({
           },
         });
       },
+    });
+
+    $(document).off("change.productCover", ".product-cover-input");
+    $(document).on("change.productCover", ".product-cover-input", function () {
+      const file = this.files && this.files[0];
+      if (!file) {
+        return;
+      }
+      const preview = document.querySelector(".product-cover-preview");
+      if (!preview) {
+        return;
+      }
+      preview.style.backgroundImage = `url(${URL.createObjectURL(file)})`;
+      preview.classList.add("has-image");
     });
   },
 

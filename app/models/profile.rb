@@ -9,7 +9,7 @@ class Profile < ApplicationRecord
   # store :contacts, coder: JSON
   # store :rewards, coder: JSON
   # store_accessor :contacts, *CONTACT_FIELDS
-  store_accessor :preferences, :theme
+  store_accessor :preferences, :theme, :weekly_digest
 
   validates :theme, inclusion: %w[auto light dark], allow_nil: true
 

@@ -1,0 +1,26 @@
+<p class="lead"><%= t("mail.weekly_digest_title", title: @digest.title) %></p>
+<p><%= t("mail.weekly_digest_intro") %></p>
+
+<% if @digest.products.any? %>
+  <p><strong><%= t("products.this_week") %></strong></p>
+  <% @digest.products.each do |product| %>
+    <p>
+      <%= link_to product.name, topic_url(product.topic) %><br />
+      <span class="text-muted"><%= product.tagline %></span>
+    </p>
+  <% end %>
+<% end %>
+
+<% if @digest.excellent_topics.any? %>
+  <p><strong><%= t("weeklies.excellent") %></strong></p>
+  <% @digest.excellent_topics.each do |topic| %>
+    <p><%= link_to topic.title, topic_url(topic) %></p>
+  <% end %>
+<% end %>
+
+<p>
+  <%= link_to t("products.view_all"), products_url, class: "btn" %>
+</p>
+<p class="text-muted">
+  <%= link_to t("products.weekly_unsubscribe"), @unsubscribe_url %>
+</p>

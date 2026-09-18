@@ -15,3 +15,9 @@ spam_cleanup:
   class: "Scheduler::SpamCleanupJob"
   queue: cleanup
   description: "Cleanup spam contents before 1 month ago"
+
+weekly_digest:
+  cron: "0 9 * * 1 Asia/Shanghai"
+  class: "Scheduler::WeeklyDigestJob"
+  queue: mailer
+  description: "Send weekly ship digest email"

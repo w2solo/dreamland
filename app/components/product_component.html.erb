@@ -1,0 +1,35 @@
+<% cache([product, product.user, variant]) do %>
+  <article class="product-card product-card-<%= variant %>">
+    <%= link_to product.path, class: "product-card-cover", title: product.name do %>
+      <% if product.cover.present? %>
+        <span class="product-card-cover-image" style="background-image: url(<%= product.cover.url(:large) %>)"></span>
+      <% else %>
+        <span class="product-card-cover-fallback"><%= product.name_initial %></span>
+      <% end %>
+    <% end %>
+    <div class="product-card-body">
+      <h3 class="product-card-name">
+        <%= link_to product.name, product.path %>
+      </h3>
+      <% if product.tagline.present? %>
+        <p class="product-card-tagline"><%= product.tagline %></p>
+      <% end %>
+      <div class="product-card-meta">
+        <%= user_avatar_tag(product.user, :xs) %>
+        <%= user_name_tag(product.user) %>
+        <% if product.launched_at.present? %>
+          <span class="product-card-time"><%= timeago(product.launched_at) %></span>
+        <% end %>
+      </div>
+      <div class="product-card-stats">
+        <span><i class="fa fa-heart"></i> <%= likes_count %></span>
+        <span><i class="fa fa-comments"></i> <%= replies_count %></span>
+        <% if product.visit_url? %>
+          <%= link_to t("products.visit"), product.url, class: "product-card-visit", target: "_blank", rel: "nofollow noopener" %>
+        <% else %>
+          <span class="product-card-visit is-disabled"><%= t("products.visit") %></span>
+        <% end %>
+      </div>
+    </div>
+  </article>
+<% end %>
