@@ -26,11 +26,12 @@ class Product < ApplicationRecord
   validate :url_unique_for_user
   validate :check_ban_words
 
-  # Only products whose topic is still public. Soft-deleted topics must not appear
-  # on the homepage / 造船台 even if the Product row still has a topic_id.
+  # Only products whose topic is still public. Inner join so soft-deleted
+  # topics never appear on the homepage / 造船台.
   scope :launched, -> {
     where.not(topic_id: nil)
-      .where(topic_id: Topic.without_ban.select(:id))
+      .joins(:topic)
+      .merge(Topic.without_ban)
   }
   # topic_id 还在，但主题已被软删或物理删除
   scope :orphaned, -> { where.not(topic_id: nil).left_joins(:topic).where(topics: {id: nil}) }

@@ -124,14 +124,27 @@ read_image_tag() {
   echo "$tag"
 }
 
+# 必须打到 compose 里 app 服务真正使用的镜像名，否则会建成 homeland/homeland
+# 而线上仍跑阿里云旧镜像，代码永远不生效。
+read_app_image() {
+  local image=""
+  image="$($COMPOSE config 2>/dev/null | awk '
+    $0 ~ /^  app:/ { in_app=1; next }
+    in_app && $0 ~ /^  [A-Za-z0-9_-]+:/ { in_app=0 }
+    in_app && $1 == "image:" { gsub(/"/, "", $2); print $2; exit }
+  ')"
+  if [[ -z "$image" ]]; then
+    printf '警告: 无法从 compose 解析 app 镜像，回退 homeland/homeland\n' >&2
+    image="homeland/homeland:$(read_image_tag "$DOCKER_DIR")"
+  fi
+  echo "$image"
+}
+
 DOCKER_DIR="$(find_docker_dir)" || die "找不到 homeland-docker 目录。请设置 HOMELAND_DOCKER_DIR，例如:
   sudo HOMELAND_DOCKER_DIR=/path/to/homeland-docker $0 --backfill"
 
 SOURCE_DIR="${SOURCE_DIR:-$REPO_ROOT}"
-IMAGE_NAME="${IMAGE_NAME:-homeland/homeland}"
-IMAGE_TAG="$(read_image_tag "$DOCKER_DIR")"
 COMPOSE="$(resolve_compose)"
-IMAGE_REF="${IMAGE_NAME}:${IMAGE_TAG}"
 
 need_cmd docker
 need_cmd git
@@ -141,8 +154,10 @@ if ! docker info >/dev/null 2>&1; then
 fi
 
 cd "$DOCKER_DIR"
+IMAGE_REF="$(read_app_image)"
 
 log "部署目录: $DOCKER_DIR"
+log "源码: $SOURCE_DIR"
 log "镜像: $IMAGE_REF"
 log "模式: $MODE  backfill=$BACKFILL  git-pull=$GIT_PULL"
 
@@ -152,11 +167,9 @@ if [[ "$MODE" == "build" ]]; then
     log "更新源码 $SOURCE_DIR"
     run "git -C $(printf '%q' "$SOURCE_DIR") pull --ff-only"
   fi
-  log "构建镜像 $IMAGE_REF"
+  GIT_SHA="$(git -C "$SOURCE_DIR" rev-parse --short HEAD 2>/dev/null || echo unknown)"
+  log "构建镜像 $IMAGE_REF （git $GIT_SHA）"
   run "docker build -t $(printf '%q' "$IMAGE_REF") $(printf '%q' "$SOURCE_DIR")"
-  if [[ "$IMAGE_TAG" != "latest" ]]; then
-    run "docker tag $(printf '%q' "$IMAGE_REF") $(printf '%q' "${IMAGE_NAME}:latest")"
-  fi
 else
   log "拉取镜像（请确认仓库里已是 dreamland，而不是官方 Homeland）"
   run "$COMPOSE pull"
@@ -197,6 +210,9 @@ if [[ "$BACKFILL" -eq 1 ]]; then
   log "回填存量作品 products:backfill"
   run "$COMPOSE run --rm app bundle exec rails products:backfill"
 fi
+
+log "清理已删帖残留作品 products:prune_orphans"
+run "$COMPOSE run --rm app bundle exec rails products:prune_orphans"
 
 log "当前容器"
 run "$COMPOSE ps"
