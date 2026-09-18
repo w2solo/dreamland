@@ -252,6 +252,21 @@ class TopicTest < ActiveSupport::TestCase
     topic.save!
   end
 
+  test "RateLimit should skip admin and maintainer" do
+    Setting.stubs(:topic_create_limit_interval).returns(60)
+    Setting.stubs(:topic_create_hour_limit_count).returns(1)
+
+    admin = create(:admin)
+    assert create(:topic, user: admin)
+    assert create(:topic, user: admin)
+    assert_nil Rails.cache.read("users:#{admin.id}:topic-create")
+
+    maintainer = create(:user, state: :maintainer)
+    assert create(:topic, user: maintainer)
+    assert create(:topic, user: maintainer)
+    assert_nil Rails.cache.read("users:#{maintainer.id}:topic-create")
+  end
+
   test "Ban word in topic" do
     Setting.stubs(:ban_words_in_body).returns(["FFF", "AAAA"])
     topic = build(:topic, body: "This is CCC")

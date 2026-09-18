@@ -307,6 +307,16 @@ class ReplyTest < ActiveSupport::TestCase
     assert_equal true, reply.save
   end
 
+  test "RateLimit should skip admin" do
+    Setting.stubs(:reply_create_limit_interval).returns(60)
+    Setting.stubs(:reply_create_hour_limit_count).returns(1)
+
+    admin = create(:admin)
+    assert create(:reply, user: admin)
+    assert create(:reply, user: admin)
+    assert_nil Rails.cache.read("users:#{admin.id}:reply-create")
+  end
+
   test "RateLimit should skip system event replies" do
     Setting.stubs(:reply_create_limit_interval).returns(60)
     topic = create(:topic)

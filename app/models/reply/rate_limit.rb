@@ -20,6 +20,8 @@ class Reply
     end
 
     def _rate_limit_create
+      return if skip_rate_limit?
+
       if Rails.cache.read(_rate_limit_key)
         errors.add(:base, I18n.t("replies.create_too_frequently"))
       end
@@ -34,9 +36,11 @@ class Reply
     end
 
     def _log_rate_limit_create
+      return if skip_rate_limit?
+
       limit_interval = _reply_create_interval
       if limit_interval > 0
-        Rails.cache.write(_rate_limit_key, 1, expires_in: limit_interval)
+        Rails.cache.write(_rate_limit_key, 1, expires_in: limit_interval.seconds)
       end
 
       count = Rails.cache.read(_rate_limit_hour_key) || 0
@@ -57,6 +61,10 @@ class Reply
 
     def _newbie_rate_limited?
       user&.newbie?
+    end
+
+    def skip_rate_limit?
+      user&.admin? || user&.maintainer?
     end
   end
 end
