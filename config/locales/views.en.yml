@@ -156,6 +156,8 @@
     ban_reason_html: "The notice text (HTML format) for banned topic, this will show up under that then banned topic."
     topic_create_limit_interval: "Topic create limit interval second. (0 no limit)"
     topic_create_hour_limit_count: "Limit number of topics create in 1 hour. (0 no limit)"
+    reply_create_limit_interval: "Reply create limit interval second. (0 no limit)"
+    reply_create_hour_limit_count: "Limit number of replies create in 1 hour. (0 no limit)"
     sign_up_daily_limit: "Limit number of users register for each IP in every day. (0 no limit)"
     use_recaptcha: "Use Google reCaptcha as captcha provider."
     captcha_enable: "Enable captcha."
@@ -266,6 +268,8 @@
     duplicate_error: "Cannot submit same content in repeatedly."
     nopoint_limit: "Please do not reply to meaningless content. If you want to bookmark or like this Topic, please use the function behind the Topic."
     close_limit: "Topic has been closed, no longer accepting create or update replies."
+    create_too_frequently: Reply too frequently, please try again later.
+    create_limit: Creation has been rejected by limit %{count} replies created within 1 hour.
   users:
     bios: "Bio"
     city: "City"
@@ -292,6 +296,7 @@
     bind_another_account: "Bind another account"
     click_to_unbind: "Click this button to unbind."
     register_user: "Sign Up"
+    sign_up_rejected: "Sign up failed, please try again later."
     login: "Pick a username"
     suggest_using_twitter_id: "Cannot modify after create."
     already_have_account: "Already have an account?"

@@ -126,8 +126,9 @@ class ReplyTest < ActiveSupport::TestCase
       assert_equal 1, topic.replies.create(body: "mark", user: user).errors[:body].size
       assert_equal 1, topic.replies.create(body: " mark ", user: user).errors[:body].size
       assert_equal 1, topic.replies.create(body: "MARK", user: user).errors[:body].size
-      assert_equal 0, topic.replies.create(body: "mark1", user: user).errors[:body].size
-      assert_equal 1, topic.replies.create(body: "mark", user: user).errors[:body].size
+      assert_equal 1, topic.replies.create(body: "mark1", user: user).errors[:body].size
+      assert_equal 1, topic.replies.create(body: "请顶一下", user: user).errors[:body].size
+      assert_equal 0, topic.replies.create(body: "thanks", user: user).errors[:body].size
     end
 
     Setting.stub(:ban_words_on_reply, []) do
@@ -249,5 +250,69 @@ class ReplyTest < ActiveSupport::TestCase
 
     # should removed duplicate
     assert_equal reply.notification_receiver_ids.uniq, reply.notification_receiver_ids
+  end
+
+  test "RateLimit should limit by interval" do
+    Setting.stubs(:reply_create_limit_interval).returns(60)
+    reply = build(:reply, user: user)
+    assert_equal true, reply.save
+    assert_equal 1, Rails.cache.read("users:#{user.id}:reply-create")
+    assert_equal 1, Rails.cache.read("users:#{user.id}:reply-create-by-hour")
+
+    reply = build(:reply, user: user)
+    assert_equal false, reply.save
+    assert_equal ["Reply too frequently, please try again later."], reply.errors.messages_for(:base)
+
+    Rails.cache.delete("users:#{user.id}:reply-create")
+    Setting.stubs(:reply_create_limit_interval).returns(0)
+    reply = build(:reply, user: user)
+    reply.save!
+    assert_nil Rails.cache.read("users:#{user.id}:reply-create")
+  end
+
+  test "RateLimit should limit by hour" do
+    create(:reply, user: user)
+    count = Rails.cache.read("users:#{user.id}:reply-create-by-hour")
+    assert_equal 1, count
+
+    create(:reply, user: user)
+    count = Rails.cache.read("users:#{user.id}:reply-create-by-hour")
+    assert_equal 2, count
+
+    Setting.stubs(:reply_create_hour_limit_count).returns(10)
+    Rails.cache.write("users:#{user.id}:reply-create-by-hour", 10)
+    reply = build(:reply, user: user)
+    assert_equal false, reply.save
+    assert_equal ["Creation has been rejected by limit 10 replies created within 1 hour."], reply.errors.messages_for(:base)
+
+    Setting.stubs(:reply_create_hour_limit_count).returns(0)
+    reply = build(:reply, user: user)
+    reply.save!
+  end
+
+  test "RateLimit should be stricter for newbies" do
+    Setting.stubs(:newbie_limit_time).returns(1.day.to_i)
+    Setting.stubs(:reply_create_limit_interval).returns(0)
+    Setting.stubs(:reply_create_hour_limit_count).returns(10)
+
+    newbie = create(:user, created_at: 1.hour.ago)
+    Rails.cache.write("users:#{newbie.id}:reply-create-by-hour", 5)
+    reply = build(:reply, user: newbie)
+    assert_equal false, reply.save
+    assert_equal ["Creation has been rejected by limit 5 replies created within 1 hour."], reply.errors.messages_for(:base)
+
+    member = create(:user, created_at: 2.days.ago)
+    Rails.cache.write("users:#{member.id}:reply-create-by-hour", 5)
+    reply = build(:reply, user: member)
+    assert_equal true, reply.save
+  end
+
+  test "RateLimit should skip system event replies" do
+    Setting.stubs(:reply_create_limit_interval).returns(60)
+    topic = create(:topic)
+    assert_nothing_raised do
+      Reply.create_system_event!(action: "excellent", topic_id: topic.id, user: user)
+    end
+    assert_nil Rails.cache.read("users:#{user.id}:reply-create")
   end
 end

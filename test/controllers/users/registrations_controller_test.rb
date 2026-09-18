@@ -10,6 +10,7 @@ class Users::RegistrationsControllerTest < ActionDispatch::IntegrationTest
 
     assert_select "input[name='_rucaptcha']"
     assert_select ".rucaptcha-image"
+    assert_select "input[name='user[fax]']"
 
     assert_no_match "Complete your account information", response.body
     assert_select %(input[name="user[omniauth_provider]"]), 0
@@ -185,5 +186,24 @@ class Users::RegistrationsControllerTest < ActionDispatch::IntegrationTest
     assert_redirected_to root_path
     follow_redirect!
     assert_select ".alert-success", text: /Welcome! You have signed up successfully/
+  end
+
+  test "honeypot field rejects sign up" do
+    ActionController::Base.any_instance.stubs(:verify_complex_captcha?).returns(true)
+
+    user_params = {
+      login: "spambot",
+      email: "spam@gmail.com",
+      name: "Spam",
+      password: "123456",
+      password_confirmation: "123456",
+      fax: "http://spam.example"
+    }
+
+    assert_no_difference "User.count" do
+      post user_registration_path, params: {user: user_params}
+    end
+    assert_equal 200, response.status
+    assert_match I18n.t("users.sign_up_rejected"), response.body
   end
 end

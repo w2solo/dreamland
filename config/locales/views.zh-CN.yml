@@ -157,6 +157,8 @@
     ban_reason_html: "屏蔽原因详细描述，用于在被屏蔽的话题后面给做补充提示（HTML 格式编写）"
     topic_create_limit_interval: "话题创建频率限制，间隔多久（单位: 秒）"
     topic_create_hour_limit_count: "1 小时内，创建话题的数量限制（单位：篇）"
+    reply_create_limit_interval: "回帖创建频率限制，间隔多久（单位: 秒）"
+    reply_create_hour_limit_count: "1 小时内，创建回帖的数量限制（单位：条）"
     sign_up_daily_limit: "单日每个 IP 的注册用户数量限制，(0 不限制)"
     use_recaptcha: "启用 Google reCaptcha 开启更强的验证码保护"
     captcha_enable: "启用验证码"
@@ -273,6 +275,8 @@
     duplicate_error: "不可以重复提交相同内容。"
     nopoint_limit: "请勿回复无意义的内容，如你想收藏或赞这篇帖子，请用帖子后面的功能。"
     close_limit: "已关闭，不再接受回帖或修改回帖。"
+    create_too_frequently: 回帖太频繁，请稍后再试。
+    create_limit: 1 小时内回帖数量不允许超过 %{count} 条，无法再次发布。
   users:
     theme_auto: 自动切换
     theme_light: 浅色模式
@@ -299,6 +303,7 @@
     bind_another_account: "绑定其他账号用于登录"
     click_to_unbind: "点击接触登陆绑定"
     register_user: "注册新用户"
+    sign_up_rejected: "注册失败，请稍后重试。"
     login: "用户名"
     suggest_using_twitter_id: "谨慎填写，以后不可修改，建议用 Twitter ID。"
     already_have_account: "已经有账号了？"

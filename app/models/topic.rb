@@ -107,9 +107,13 @@ class Topic < ApplicationRecord
   end
 
   def check_topic_ban_words
-    ban_words = Setting.ban_words_in_body.collect(&:strip)
+    ban_words = Setting.ban_words_in_body.collect(&:strip).reject(&:blank?)
     ban_words.each do |word|
-      if body.include?(word)
+      if title.to_s.include?(word)
+        errors.add(:title, I18n.t("topics.sensitive_word_limit", word: word))
+        return false
+      end
+      if body.to_s.include?(word)
         errors.add(:body, I18n.t("topics.sensitive_word_limit", word: word))
         return false
       end

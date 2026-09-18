@@ -58,6 +58,9 @@ end
           <%= form_group(f, :password_confirmation) do %>
             <%= f.password_field :password_confirmation, class: "form-control form-control-lg", placeholder: t("activerecord.attributes.user.password_confirmation") %>
           <% end %>
+          <div class="hp-field" aria-hidden="true">
+            <%= text_field_tag "user[fax]", nil, tabindex: -1, autocomplete: "off" %>
+          </div>
           <%= form_group(f, :base, label: false) do %>
             <div class="input-group input-group-lg">
               <%= render "/shared/captcha_input" %>

@@ -8,8 +8,8 @@ class SettingTest < ActiveSupport::TestCase
   end
 
   test "reject_newbie_reply_in_the_evening" do
-    assert_equal false, Setting.reject_newbie_reply_in_the_evening
-    assert_equal false, Setting.reject_newbie_reply_in_the_evening?
+    assert_equal true, Setting.reject_newbie_reply_in_the_evening
+    assert_equal true, Setting.reject_newbie_reply_in_the_evening?
   end
 
   test "topic_create_rate_limit" do
@@ -215,5 +215,71 @@ class SettingTest < ActiveSupport::TestCase
         assert_equal ["bar.com", "asset.bar.com", "localhost"], Setting.imageproxy_ignore_hosts
       end
     end
+  end
+
+  test "anti-spam field defaults" do
+    assert_equal 1.day.to_i, Setting.get_field(:newbie_limit_time)[:default]
+    assert_equal 60, Setting.get_field(:topic_create_limit_interval)[:default]
+    assert_equal 8, Setting.get_field(:topic_create_hour_limit_count)[:default]
+    assert_equal 10, Setting.get_field(:reply_create_limit_interval)[:default]
+    assert_equal 30, Setting.get_field(:reply_create_hour_limit_count)[:default]
+    assert_equal 5, Setting.get_field(:sign_up_daily_limit)[:default]
+    assert_equal true, Setting.get_field(:captcha_enable)[:default]
+    assert_equal 300, Setting.get_field(:rack_attack)[:default][:limit]
+    assert_equal 300, Setting.get_field(:rack_attack)[:default][:period]
+  end
+
+  test "apply_anti_spam_defaults! fills blank values only" do
+    Setting.unstub(:newbie_limit_time)
+    Setting.unstub(:topic_create_limit_interval)
+    Setting.unstub(:topic_create_hour_limit_count)
+    Setting.unstub(:sign_up_daily_limit)
+    Setting.unstub(:captcha_enable?)
+    Setting.unstub(:rack_attack_limit)
+
+    Setting.newbie_limit_time = 3600
+    Setting.topic_create_limit_interval = 15
+    Setting.topic_create_hour_limit_count = 3
+    Setting.sign_up_daily_limit = 2
+    Setting.captcha_enable = false
+    Setting.reject_newbie_reply_in_the_evening = false
+    Setting.rack_attack = {limit: 0, period: 60}
+
+    Setting.apply_anti_spam_defaults!
+
+    assert_equal 3600, Setting.newbie_limit_time
+    assert_equal 15, Setting.topic_create_limit_interval
+    assert_equal 3, Setting.topic_create_hour_limit_count
+    assert_equal 2, Setting.sign_up_daily_limit
+    assert_equal true, Setting.captcha_enable?
+    assert_equal true, Setting.reject_newbie_reply_in_the_evening?
+    assert_equal 300, Setting.rack_attack_limit
+    assert_equal 300, Setting.rack_attack_period
+
+    Setting.newbie_limit_time = 0
+    Setting.topic_create_limit_interval = 0
+    Setting.topic_create_hour_limit_count = 0
+    Setting.sign_up_daily_limit = 0
+    Setting.apply_anti_spam_defaults!
+
+    assert_equal 1.day.to_i, Setting.newbie_limit_time
+    assert_equal 60, Setting.topic_create_limit_interval
+    assert_equal 8, Setting.topic_create_hour_limit_count
+    assert_equal 5, Setting.sign_up_daily_limit
+  end
+
+  test "rack_attack_limit and period read live settings" do
+    Setting.unstub(:rack_attack_limit)
+    Setting.rack_attack = {limit: 12, period: 90}
+    assert_equal 12, Setting.rack_attack_limit
+    assert_equal 90, Setting.rack_attack_period
+
+    Setting.rack_attack = {limit: 10, period: 3.minutes}
+    assert_equal 10, Setting.rack_attack_limit
+    assert_equal 3.minutes, Setting.rack_attack_period
+
+    Setting.rack_attack = {limit: 0, period: 0}
+    assert_equal 0, Setting.rack_attack_limit
+    assert_equal 5.minutes, Setting.rack_attack_period
   end
 end

@@ -5,6 +5,15 @@ class Users::RegistrationsController < Devise::RegistrationsController
 
   # POST /resource
   def create
+    if params.dig(:user, :fax).present?
+      logger.warn "Signup honeypot triggered from IP #{request.remote_ip}"
+      build_resource(sign_up_params)
+      clean_up_passwords resource
+      resource.errors.add(:base, I18n.t("users.sign_up_rejected"))
+      respond_with resource
+      return
+    end
+
     cache_key = ["user-sign-up", request.remote_ip, Date.today]
     # IP limit
     sign_up_count = Rails.cache.read(cache_key) || 0

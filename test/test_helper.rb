@@ -31,8 +31,13 @@ class ActiveSupport::TestCase
 
   setup do
     Setting.stubs(:captcha_enable?).returns(true)
+    Setting.stubs(:newbie_limit_time).returns(0)
     Setting.stubs(:topic_create_limit_interval).returns("")
     Setting.stubs(:topic_create_hour_limit_count).returns("")
+    Setting.stubs(:reply_create_limit_interval).returns("")
+    Setting.stubs(:reply_create_hour_limit_count).returns("")
+    Setting.stubs(:sign_up_daily_limit).returns(0)
+    Setting.stubs(:rack_attack_limit).returns(0)
   end
 
   teardown do

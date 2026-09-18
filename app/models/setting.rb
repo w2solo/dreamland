@@ -57,9 +57,12 @@ class Setting < RailsSettings::Base
     ban_reasons
     topic_create_limit_interval
     topic_create_hour_limit_count
+    reply_create_limit_interval
+    reply_create_hour_limit_count
     allow_change_login
     sign_up_daily_limit
     captcha_enable
+    rack_attack
     use_recaptcha
     recaptcha_key
     recaptcha_secret
@@ -94,8 +97,8 @@ class Setting < RailsSettings::Base
 
   # = Rack Attach
   field :rack_attack, type: :hash, default: {
-    limit: 0,
-    period: 3.minutes
+    limit: 300,
+    period: 300
   }
 
   # = Uploader
@@ -144,12 +147,14 @@ class Setting < RailsSettings::Base
   # = Other Site Configs
   field :admin_emails, type: :array, default: (ENV["admin_emails"] || "admin@admin.com"), separator: /[\s,]+/
 
-  field :newbie_limit_time, type: :integer, default: 0
-  field :topic_create_limit_interval, type: :integer, default: 0
-  field :topic_create_hour_limit_count, type: :integer, default: 0
-  field :sign_up_daily_limit, type: :integer, default: 0
+  field :newbie_limit_time, type: :integer, default: 1.day.to_i
+  field :topic_create_limit_interval, type: :integer, default: 60
+  field :topic_create_hour_limit_count, type: :integer, default: 8
+  field :reply_create_limit_interval, type: :integer, default: 10
+  field :reply_create_hour_limit_count, type: :integer, default: 30
+  field :sign_up_daily_limit, type: :integer, default: 5
 
-  field :reject_newbie_reply_in_the_evening, default: "false", type: :boolean
+  field :reject_newbie_reply_in_the_evening, default: "true", type: :boolean
   field :allow_change_login, type: :boolean, default: (ENV["allow_change_login"] || false)
   field :topic_create_rate_limit, default: "false", type: :boolean
   field :node_ids_hide_in_topics_index, type: :array, default: []
@@ -182,7 +187,7 @@ class Setting < RailsSettings::Base
   field :editor_languages, default: %w[rb go js py java rs php css html yml json xml], type: :array, separator: /[\s,]+/
 
   # = ReCaptcha
-  field :captcha_enable, default: false, type: :boolean
+  field :captcha_enable, default: true, type: :boolean
   field :use_recaptcha, default: false, type: :boolean
   # default key for development env
   field :recaptcha_key, default: "6LeIxAcTAAAAAJcZVRqyHh71UMIEGNQ_MXjiZKhI"
@@ -266,6 +271,38 @@ class Setting < RailsSettings::Base
 
     def can_emoji?
       self.emoji_enable? == true
+    end
+
+    def rack_attack_limit
+      rack_attack_config[:limit].to_s.to_i
+    end
+
+    def rack_attack_period
+      period = rack_attack_config[:period]
+      seconds = case period
+      when Numeric, ActiveSupport::Duration
+        period.to_i
+      else
+        period.to_s.to_i
+      end
+      seconds.nonzero? || 5.minutes
+    end
+
+    # Write recommended anti-spam values only when the current ones are still off / 0.
+    def apply_anti_spam_defaults!
+      self.captcha_enable = true unless captcha_enable?
+      self.newbie_limit_time = 1.day.to_i if newbie_limit_time.to_i == 0
+      self.topic_create_limit_interval = 60 if topic_create_limit_interval.to_i == 0
+      self.topic_create_hour_limit_count = 8 if topic_create_hour_limit_count.to_i == 0
+      self.sign_up_daily_limit = 5 if sign_up_daily_limit.to_i == 0
+      self.reject_newbie_reply_in_the_evening = true unless reject_newbie_reply_in_the_evening?
+      self.rack_attack = {limit: 300, period: 300} if rack_attack_limit <= 0
+    end
+
+    private
+
+    def rack_attack_config
+      (rack_attack || {}).with_indifferent_access
     end
   end
 

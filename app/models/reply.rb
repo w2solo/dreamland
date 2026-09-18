@@ -10,6 +10,7 @@ class Reply < ApplicationRecord
   include SoftDelete
   include Reply::Voteable
   include Reply::Notify
+  include Reply::RateLimit
 
   belongs_to :user, counter_cache: true
   belongs_to :topic, touch: true
@@ -25,9 +26,15 @@ class Reply < ApplicationRecord
   validates :body, presence: true, unless: -> { system_event? }
   validates :body, uniqueness: {scope: %i[topic_id user_id], message: I18n.t("replies.duplicate_error")}, unless: -> { system_event? }
   validate do
-    ban_words = Setting.ban_words_on_reply.collect(&:strip)
-    if !system_event? && body&.strip&.downcase&.in?(ban_words)
-      errors.add(:body, I18n.t("replies.nopoint_limit"))
+    ban_words = Setting.ban_words_on_reply.collect(&:strip).reject(&:blank?)
+    body_text = body.to_s.downcase
+    if !system_event?
+      ban_words.each do |word|
+        if body_text.include?(word.downcase)
+          errors.add(:body, I18n.t("replies.nopoint_limit"))
+          break
+        end
+      end
     end
 
     if topic&.closed?

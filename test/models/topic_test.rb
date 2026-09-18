@@ -264,6 +264,13 @@ class TopicTest < ActiveSupport::TestCase
     assert_equal ["Create failed, because content has sensitive word \"AAAA\"."], topic.errors.messages_for(:body)
   end
 
+  test "Ban word in topic title" do
+    Setting.stubs(:ban_words_in_body).returns(["FFF"])
+    topic = build(:topic, title: "This is FFFF", body: "normal body")
+    assert_equal false, topic.valid?
+    assert_equal ["Create failed, because content has sensitive word \"FFF\"."], topic.errors.messages_for(:title)
+  end
+
   test "as_indexed_json" do
     topic = build(:topic, title: "hello world", body: "This **is** body New line")
     json = topic.as_indexed_json
