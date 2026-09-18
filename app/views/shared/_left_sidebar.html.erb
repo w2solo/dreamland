@@ -1,0 +1,18 @@
+<% unless current_user %>
+  <div class="left-sidebar-cta d-none d-md-block">
+    <%= link_to t("common.register"), main_app.new_user_registration_path, class: "btn btn-outlined btn-block" unless Setting.sso_enabled? %>
+    <%= link_to t("common.login"), main_app.new_user_session_path, class: "btn btn-default btn-block mt-2" %>
+  </div>
+<% end %>
+
+<ul id="main-nav-menu" class="left-nav navbar-nav">
+  <%= render_list_items do |li|
+    li << link_to(raw('<i class="fa fa-home"></i> ' + t("menu.topics")), main_app.root_path, class: "nav-link")
+    li << link_to(raw('<i class="fa fa-rocket"></i> ' + t("menu.products")), main_app.products_path, class: "nav-link")
+
+    Homeland.navbar_plugins.each do |plugin|
+      li << link_to(raw('<i class="fa fa-puzzle-piece"></i> ' + plugin.display_name), plugin.root_path, class: "nav-link")
+    end
+  end %>
+  <%= raw Setting.navbar_html %>
+</ul>

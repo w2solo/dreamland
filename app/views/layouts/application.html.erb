@@ -43,30 +43,36 @@
   <body class="page-<%= controller_name %><%= ' infinite-scroll' if turbolinks_app? %>" data-controller-name="<%= controller_name %>">
     <div class="header navbar navbar-expand-md">
       <div class="container">
+        <button class="navbar-toggler d-md-none" type="button" data-toggle="collapse" data-target="#site-left-sidebar" aria-controls="site-left-sidebar" aria-expanded="false" aria-label="Toggle navigation">
+          <span class="navbar-toggler-icon"><i class="fa fa-bars"></i></span>
+        </button>
         <div class="navbar-header" data-turbolinks-permanent>
           <%= raw Setting.navbar_brand_html %>
         </div>
-        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#main-navbar">
-          <span class="navbar-toggler-icon"><i class="fa fa-bars"></i></span>
-        </button>
-        <div id="main-navbar"  class="collapse navbar-collapse">
-          <%= yield :header %>
-          <%= render "shared/navbar" %>
-        </div>
-        <div class="ml-auto d-flex navbar-right">
-          <form class="navbar-form d-none d-lg-flex mr-2 form-search active" action="/search" method="GET">
-            <i class="fa btn-search fa-search"></i>
-            <input type="text" name="q" class="form-control" value="<%= params[:q] %>" placeholder="<%= t("common.search") %>"></input>
+        <%= yield :header %>
+        <form class="navbar-form d-none d-md-flex form-search active" action="/search" method="GET">
+          <button type="submit" class="btn-search" aria-label="<%= t("common.search") %>">
+            <i class="fa fa-search"></i>
+          </button>
+          <input type="text" name="q" class="form-control" value="<%= params[:q] %>" placeholder="<%= t("common.search") %>"></input>
         </form>
-        <%= render "shared/usernav" %>
+        <div class="navbar-right">
+          <%= render "shared/usernav" %>
+        </div>
       </div>
     </div>
-  </div>
-  <%= yield :sub_navbar %>
-  <div id="main" class="main-container container">
-    <%= notice_message %>
-    <%= content_for?(:main) ? yield(:main) : yield %>
-  </div>
+    <div id="main" class="main-container container">
+      <%= notice_message %>
+      <div class="site-layout">
+        <aside id="site-left-sidebar" class="site-left-sidebar collapse d-md-block">
+          <%= render "shared/left_sidebar" %>
+        </aside>
+        <div class="site-main">
+          <%= yield :sub_navbar %>
+          <%= content_for?(:main) ? yield(:main) : yield %>
+        </div>
+      </div>
+    </div>
   <% if !mobile? %>
     <footer class="footer" id="footer" data-turbolinks-permanent>
       <div class="container">

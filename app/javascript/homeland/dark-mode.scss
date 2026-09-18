@@ -1,106 +1,120 @@
 :root[data-theme="dark"] {
-  --brand: #f0753a;
-  --brand-hover: #ff8a54;
-  --brand-soft: rgba(240, 117, 58, 0.16);
-  --primary: #f3e6d8 !important;
-  --text-color: #f3e6d8;
-  --text-color1: #d9cbbf;
-  --text-color2: #a89486;
-  --text-color3: #7a6a60;
-  --link-color: #f3e6d8;
-  --default: #3a302b;
-  --gray: rgba(240, 117, 58, 0.08);
-  --secondary: #a89486;
+  --brand: #7b86f0;
+  --brand-hover: #9aa3f5;
+  --brand-soft: rgba(123, 134, 240, 0.16);
+  --primary: #f9f9f9 !important;
+  --text-color: #f9f9f9;
+  --text-color1: #d6d6d7;
+  --text-color2: #a3a3a3;
+  --text-color3: #717171;
+  --link-color: #f9f9f9;
+  --default: #3d3d3d;
+  --gray: #242424;
+  --secondary: #a3a3a3;
   --red: #f0753a;
   --red-light: rgba(240, 117, 58, 0.12);
-  --yellow: #fee209;
-  --yellow-light: #fffdee10;
-  --blue: #6ea6f0;
-  --blue-light: #e6f0fb10;
-  --green: #5ec45a;
-  --green-light: #f4fff210;
+  --yellow: #fbbf24;
+  --yellow-light: rgba(251, 191, 36, 0.12);
+  --blue: #7b86f0;
+  --blue-light: rgba(123, 134, 240, 0.12);
+  --green: #34d399;
+  --green-light: rgba(52, 211, 153, 0.12);
 
-  --divider-color: rgba(243, 230, 216, 0.08);
+  --divider-color: rgba(255, 255, 255, 0.08);
 
-  --filter-color: #a89486;
-  --filter-active-color: #f0753a;
+  --filter-color: #a3a3a3;
+  --filter-active-color: #f9f9f9;
 
-  --node-pill-bg: rgba(243, 230, 216, 0.08);
-  --node-pill-fg: #d9cbbf;
+  --node-pill-bg: transparent;
+  --node-pill-fg: #a3a3a3;
   --node-pill-product-bg: rgba(240, 117, 58, 0.18);
   --node-pill-product-fg: #ffb08a;
-  --node-pill-talk-bg: rgba(243, 230, 216, 0.06);
-  --node-pill-talk-fg: #a89486;
-  --node-pill-open-bg: rgba(94, 196, 90, 0.16);
-  --node-pill-open-fg: #8ed98b;
-  --avatar-fallback-bg: #2a211c;
+  --node-pill-talk-bg: transparent;
+  --node-pill-talk-fg: #a3a3a3;
+  --node-pill-open-bg: rgba(52, 211, 153, 0.16);
+  --node-pill-open-fg: #6ee7b7;
+  --avatar-fallback-bg: #242424;
 
-  --btn-default-text-color: #c7c7c7;
-  --btn-default-background-color: #3d3d3d99;
-  --btn-default-border-color: #414144;
-  --btn-default-active-background-color: #27272b99;
-  --btn-default-active-border-color: #414144;
-  --btn-default-active-text-color: #eeeeeebd;
-  --btn-default-hover-background-color: #4d4d4d99;
-  --btn-default-hover-border-color: #59595e;
+  --accent: #f0753a;
+  --accent-hover: #ff8a54;
+  --accent-soft: rgba(240, 117, 58, 0.16);
 
-  --form-control-background-color: #0104094d;
-  --form-control-border-color: #21262d;
-  --form-control-disabled-background-color: #1a1a1f;
+  --navbar-logo-bg: #f9f9f9;
+  --navbar-logo-color: #090909;
+  --focus-ring: 0 0 0 2px #171717, 0 0 0 4px #7b86f0;
 
-  --input-group-background-color: #1a1a1f;
-  --input-group-border-color: #3d3d3d3b;
+  --btn-default-text-color: #d6d6d7;
+  --btn-default-background-color: transparent;
+  --btn-default-border-color: #3d3d3d;
+  --btn-default-active-background-color: #242424;
+  --btn-default-active-border-color: #3d3d3d;
+  --btn-default-active-text-color: #f9f9f9;
+  --btn-default-hover-background-color: rgba(255, 255, 255, 0.08);
+  --btn-default-hover-border-color: #575757;
 
-  --body-background-color: #16110e;
+  --form-control-background-color: #171717;
+  --form-control-border-color: #3d3d3d;
+  --form-control-disabled-background-color: #242424;
 
-  --navbar-background-color: #1c1613;
-  --navbar-text-color: #d9cbbf;
-  --navbar-shadow-color: rgba(0, 0, 0, 0.35);
-  --navbar-fixed-shadow-color: rgba(0, 0, 0, 0.45);
-  --navbar-brand-text-color: #f3e6d8;
-  --navbar-brand-text-strong-color: #f0753a;
-  --navbar-item-active-text-color: #f0753a;
+  --input-group-background-color: #171717;
+  --input-group-border-color: #3d3d3d;
+
+  --body-background-color: #090909;
+
+  --navbar-background-color: #171717;
+  --navbar-text-color: #d6d6d7;
+  --navbar-shadow-color: rgba(0, 0, 0, 0.45);
+  --navbar-fixed-shadow-color: rgba(0, 0, 0, 0.55);
+  --navbar-brand-text-color: #090909;
+  --navbar-brand-text-strong-color: #090909;
+  --navbar-item-active-text-color: #f9f9f9;
+  --navbar-item-link-active-background-color: rgba(123, 134, 240, 0.16);
 
   --sub-navbar-background-color: transparent;
-  --sub-navbar-shadow-color: rgba(243, 230, 216, 0.06);
+  --sub-navbar-shadow-color: transparent;
 
-  --navbar-topic-title-background-color: #1c1613;
+  --navbar-topic-title-background-color: #171717;
 
-  --card-box-shadow: 0 1px 2px rgba(0, 0, 0, 0.28);
-  --card-border-color: rgba(243, 230, 216, 0.08);
-  --card-background-color: #211a16;
-  --card-title-secondary-color: #a89486;
+  --card-box-shadow: 0 0 0 1px rgba(255, 255, 255, 0.08);
+  --card-border-color: rgba(255, 255, 255, 0.08);
+  --card-background-color: #171717;
+  --card-title-secondary-color: #a3a3a3;
 
-  --dropdown-menu-background-color: #1c1613;
-  --dropdown-menu-border-color: rgba(243, 230, 216, 0.1);
-  --dropdown-menu-text-color: #d9cbbf;
-  --dropdown-menu-divider-color: rgba(243, 230, 216, 0.08);
+  --dropdown-menu-background-color: #171717;
+  --dropdown-menu-border-color: rgba(255, 255, 255, 0.1);
+  --dropdown-menu-text-color: #d6d6d7;
+  --dropdown-menu-divider-color: rgba(255, 255, 255, 0.08);
 
-  --dropdown-item-active-background-color: rgba(200, 200, 200, 0.1);
+  --dropdown-item-active-background-color: rgba(255, 255, 255, 0.08);
   --dropdown-item-active-text-color: #fff;
 
-  --modal-background-color: #211a16;
-  --modal-shadow-color: rgba(0, 0, 0, 0.39);
+  --modal-background-color: #171717;
+  --modal-shadow-color: rgba(0, 0, 0, 0.6);
 
-  --list-group-item-border-color: #3d3d3d99;
+  --list-group-item-border-color: rgba(255, 255, 255, 0.08);
 
-  --table-border-color: #36373ab5;
+  --table-border-color: #3d3d3d;
 
-  --topic-item-border-color: rgba(243, 230, 216, 0.06);
-  --topic-item-hover-background-color: rgba(240, 117, 58, 0.06);
+  --topic-item-border-color: rgba(255, 255, 255, 0.08);
+  --topic-item-hover-background-color: transparent;
 
-  --label-awesome-background-color: #f9cd940d;
+  --label-awesome-background-color: rgba(240, 117, 58, 0.12);
 
-  --opts-text-color: #6f6f6f;
-  --opts-link-color: #f7f7f77c;
-  --opts-link-hover-background-color: #77787926;
-  --opts-active-icon-color: #ccc;
+  --opts-text-color: #717171;
+  --opts-link-color: #a3a3a3;
+  --opts-link-hover-background-color: rgba(123, 134, 240, 0.16);
+  --opts-active-icon-color: #f0753a;
 
-  --scrollbar-thumb-color: #333333aa;
+  --scrollbar-thumb-color: #3d3d3d;
   --scrollbar-track-color: transparent;
 
-  --nav-pills-active-background-color: #f0753a;
-  --nav-pills-active-text-color: #fff;
+  --nav-pills-active-background-color: transparent;
+  --nav-pills-active-text-color: #f9f9f9;
+
+  --left-nav-hover-bg: rgba(123, 134, 240, 0.16);
+  --left-nav-hover-color: #9aa3f5;
+  --left-nav-current-bg: #242424;
+  --left-nav-current-color: #f9f9f9;
 }
 
 [data-theme="dark"] {
@@ -176,7 +190,7 @@
 
   .move-page-buttons {
     .btn-move-page {
-      background: #211a16;
+      background: #171717;
     }
   }
 
@@ -192,12 +206,16 @@
     }
   }
 
+  .topics .topic:hover {
+    box-shadow: 0 0 0 1px rgba(255, 255, 255, 0.18);
+  }
+
   .product-cover-preview {
-    background: #2a211c;
-    border-color: rgba(243, 230, 216, 0.12);
+    background: #242424;
+    border-color: rgba(255, 255, 255, 0.12);
   }
 
   .intent-card:hover {
-    background: #2a211c;
+    background: #242424;
   }
 }

@@ -1,24 +1,12 @@
 <% cache([topic, topic.user_avatar_raw, type]) do %>
-  <div class="topic media topic-<%= topic.id %>" data-prefetch="<%= main_app.topic_path(topic) %>">
-    <div class="avatar">
-      <%= user_avatar_tag(topic.user, :md) %>
-    </div>
-    <div class="infos media-body">
-      <div class="title media-heading">
-        <%= link_to(main_app.topic_path(topic), title: topic.title) do %>
-          <% if topic.node&.name.present? %>
-            <span class="node" data-node="<%= topic.node.name %>"><%= topic.node.name %></span>
-          <% end %>
-          <%= topic.title %>
-        <% end %>
-        <%= icon_tag("pin") if type == "suggest" %>
-        <%= topic_excellent_tag(topic) %>
-        <%= topic_close_tag(topic) %>
+  <article class="topic crayons-story topic-<%= topic.id %>" data-prefetch="<%= main_app.topic_path(topic) %>">
+    <div class="story-meta">
+      <div class="avatar">
+        <%= user_avatar_tag(topic.user, :md) %>
       </div>
-      <div class="info">
+      <div class="story-byline">
         <%= user_name_tag(topic.user) %>
-        <span class="hidden-mobile">
-          •
+        <span class="story-date hidden-mobile">
           <% if topic.last_reply_user_login.blank? %>
             <%= raw t("common.created_at", time: timeago(topic.created_at))%>
           <% else %>
@@ -27,10 +15,30 @@
         </span>
       </div>
     </div>
-    <div class="count media-right">
-      <% if topic.replies_count > 0 %>
-        <%= link_to(topic.replies_count,"#{main_app.topic_path(topic)}#reply-#{topic.last_reply_id}", class: "state-false") %>
+    <h3 class="title media-heading">
+      <%= link_to(main_app.topic_path(topic), title: topic.title) do %>
+        <%= topic.title %>
+      <% end %>
+      <%= icon_tag("pin") if type == "suggest" %>
+      <%= topic_excellent_tag(topic) %>
+      <%= topic_close_tag(topic) %>
+    </h3>
+    <div class="story-tags">
+      <% if topic.node&.name.present? %>
+        <%= link_to main_app.node_topics_path(topic.node_id), class: "crayons-tag", data: { node: topic.node.name } do %>
+          <span class="crayons-tag-prefix">#</span><%= topic.node.name %>
+        <% end %>
       <% end %>
     </div>
-  </div>
+    <div class="story-engagement">
+      <span class="story-stat">
+        <i class="fa fa-heart"></i>
+        <%= topic.likes_count %>
+      </span>
+      <%= link_to("#{main_app.topic_path(topic)}#replies", class: "story-stat #{'state-false' if topic.replies_count > 0}") do %>
+        <i class="fa fa-comment"></i>
+        <%= topic.replies_count %> <%= t("common.comments") %>
+      <% end %>
+    </div>
+  </article>
 <% end %>

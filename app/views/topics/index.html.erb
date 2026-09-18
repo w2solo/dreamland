@@ -5,27 +5,29 @@
 <% @suggest_topics = @suggest_topics.to_a %>
 <%= render "topics/node_info", node: @node %>
 <% if action_name == "index" && @weekly_products.present? %>
-  <div class="weekly-strip">
-    <div class="weekly-strip-header">
-      <h2><%= t("products.this_week") %></h2>
-      <%= link_to t("products.view_all"), products_path %>
-    </div>
-    <div class="product-grid product-grid-strip">
-      <%= render ProductComponent.with_collection(@weekly_products) %>
+  <div class="weekly-strip card">
+    <div class="card-body">
+      <div class="weekly-strip-header">
+        <h2><%= t("products.this_week") %></h2>
+        <%= link_to t("products.view_all"), products_path %>
+      </div>
+      <div class="product-grid product-grid-strip">
+        <%= render ProductComponent.with_collection(@weekly_products) %>
+      </div>
     </div>
   </div>
 <% end %>
 <div class="row">
   <div class="col-lg-9">
-    <div class="topics topics-<%= action_name %> card">
-      <div class="card-body item-list">
+    <div class="topics topics-<%= action_name %>">
+      <div class="item-list">
         <% if @suggest_topics.present? %>
           <%= render TopicComponent.with_collection(@suggest_topics, type: "suggest") %>
         <% end %>
         <%= render TopicComponent.with_collection(@topics) %>
       </div>
       <% if  @topics.total_pages > 1 %>
-        <div class="card-footer clearfix">
+        <div class="feed-pagination clearfix">
           <% if (action_name.in? %(index recent)) && (controller_name == "topics") %>
             <%= paginate @topics, total_pages: Topic.total_pages %>
           <% else %>

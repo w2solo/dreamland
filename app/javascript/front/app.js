@@ -241,8 +241,17 @@ const AppView = Backbone.View.extend({
   },
 
   openHeaderSearchBox(e) {
-    $(".header .form-search").addClass("active");
-    $(".header .form-search input").focus();
+    const $form = $(".header .form-search");
+    const $input = $form.find("input");
+    if ($form.hasClass("active")) {
+      if ($input.val().trim().length > 0) {
+        return true;
+      }
+      $input.focus();
+      return false;
+    }
+    $form.addClass("active");
+    $input.focus();
     return false;
   },
 

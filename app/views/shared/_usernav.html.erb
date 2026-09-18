@@ -1,4 +1,7 @@
 <ul class="nav navbar-nav user-bar">
+  <li class="nav-item d-md-none">
+    <a href="<%= main_app.search_path %>" class="nav-link" title="<%= t("common.search") %>"><i class="fa fa-search"></i></a>
+  </li>
   <% if current_user %>
     <%
   badge_class = ""
@@ -46,9 +49,9 @@
       </div>
     </li>
   <% else %>
+    <li class="nav-item d-none d-md-block"><%= link_to t("common.login"), main_app.new_user_session_path, class: "nav-link" %></li>
     <% if !Setting.sso_enabled? %>
-      <li class="nav-item"><%= link_to t("common.register"), main_app.new_user_registration_path, class: "nav-link" %></li>
+      <li class="nav-item"><%= link_to t("common.register"), main_app.new_user_registration_path, class: "nav-link btn-outlined" %></li>
     <% end %>
-    <li class="nav-item"><%= link_to t("common.login"), main_app.new_user_session_path, class: "nav-link" %></li>
   <% end %>
 </ul>

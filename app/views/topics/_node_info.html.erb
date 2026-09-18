@@ -1,49 +1,45 @@
-<% content_for :sub_navbar do %>
-  <div class="sub-navbar node-header <%= "node-header-with-node" if node %> hide-ios">
-    <div class="container">
-      <% if !node.blank? %>
-        <div class="title">
-          <%= node.name %>
-          <span class="total"><%= t("topics.total_topics_html", count: node.topics_count) %></span>
-          <div class="pull-right">
-            <% if node.collapse_summary? %>
-              <a class="btn btn-sm btn-default" data-toggle="collapse" href="#node-summary"><i class="fa fa-lightbulb-o"></i></a>
-            <% end %>
-            <%= block_node_tag(node) %>
-          </div>
-        </div>
-        <div class="summary<%= ' collapse' if node.collapse_summary? %>" id="node-summary">
-          <%= sanitize_markdown node.summary_html %>
-        </div>
-      <% else %>
-        <ul class="filter nav nav-pills maker-filters">
-          <li class="<%= ' active' if action_name == 'index' %>">
-            <a href="<%= main_app.topics_path %>" data-turbolinks-action="replace"><%= t("topics.topic_list.latest") %></a>
-          </li>
-          <li class="<%= ' active' if action_name == 'newproduct' || controller_name == 'products' %>">
-            <a href="<%= main_app.products_path %>" data-turbolinks-action="replace"><%= t("topics.topic_list.newproduct") %></a>
-          </li>
-          <li class="<%= ' active' if action_name == 'last' %>">
-            <%= link_to(t("topics.topic_list.recent"), main_app.last_topics_path, data: { 'turbolinks-action': 'replace' }) %>
-          </li>
-          <li class="<%= ' active' if action_name == 'excellent' %>">
-            <a href="<%= main_app.excellent_topics_path %>" data-turbolinks-action="replace"><i class="fa fa-award"></i> <%= t("topics.topic_list.excellent") %></a>
-          </li>
-          <li class="<%= ' active' if action_name == 'popular' %>">
-            <a href="<%= main_app.popular_topics_path %>" data-turbolinks-action="replace"><%= t("topics.topic_list.popular") %></a>
-          </li>
-          <% if can?(:ban, Topic) %>
-            <li class="<%= ' active' if action_name == 'banned' %>">
-              <%= link_to(t("topics.topic_list.banned"), main_app.banned_topics_path, data: { 'turbolinks-action': 'replace' }) %>
-            </li>
-          <% end %>
-          <% if !mobile? %>
-            <li class="<%= ' active' if action_name == 'last_reply' %>">
-              <%= link_to(t("topics.topic_list.last_reply"), main_app.last_reply_topics_path, data: { 'turbolinks-action': 'replace' }) %>
-            </li>
-          <% end %>
-        </ul>
-      <% end %>
+<div class="node-header <%= "node-header-with-node" if node %> hide-ios">
+  <% if !node.blank? %>
+    <div class="title">
+      <%= node.name %>
+      <span class="total"><%= t("topics.total_topics_html", count: node.topics_count) %></span>
+      <div class="pull-right">
+        <% if node.collapse_summary? %>
+          <a class="btn btn-sm btn-default" data-toggle="collapse" href="#node-summary"><i class="fa fa-lightbulb-o"></i></a>
+        <% end %>
+        <%= block_node_tag(node) %>
+      </div>
     </div>
-  </div>
-<% end %>
+    <div class="summary<%= ' collapse' if node.collapse_summary? %>" id="node-summary">
+      <%= sanitize_markdown node.summary_html %>
+    </div>
+  <% else %>
+    <ul class="filter nav maker-filters feed-tabs">
+      <li class="<%= ' active' if action_name == 'index' %>">
+        <a href="<%= main_app.topics_path %>" data-turbolinks-action="replace"><%= t("topics.topic_list.latest") %></a>
+      </li>
+      <li class="<%= ' active' if action_name == 'newproduct' || controller_name == 'products' %>">
+        <a href="<%= main_app.products_path %>" data-turbolinks-action="replace"><%= t("topics.topic_list.newproduct") %></a>
+      </li>
+      <li class="<%= ' active' if action_name == 'last' %>">
+        <%= link_to(t("topics.topic_list.recent"), main_app.last_topics_path, data: { 'turbolinks-action': 'replace' }) %>
+      </li>
+      <li class="<%= ' active' if action_name == 'excellent' %>">
+        <a href="<%= main_app.excellent_topics_path %>" data-turbolinks-action="replace"><i class="fa fa-award"></i> <%= t("topics.topic_list.excellent") %></a>
+      </li>
+      <li class="<%= ' active' if action_name == 'popular' %>">
+        <a href="<%= main_app.popular_topics_path %>" data-turbolinks-action="replace"><%= t("topics.topic_list.popular") %></a>
+      </li>
+      <% if can?(:ban, Topic) %>
+        <li class="<%= ' active' if action_name == 'banned' %>">
+          <%= link_to(t("topics.topic_list.banned"), main_app.banned_topics_path, data: { 'turbolinks-action': 'replace' }) %>
+        </li>
+      <% end %>
+      <% if !mobile? %>
+        <li class="<%= ' active' if action_name == 'last_reply' %>">
+          <%= link_to(t("topics.topic_list.last_reply"), main_app.last_reply_topics_path, data: { 'turbolinks-action': 'replace' }) %>
+        </li>
+      <% end %>
+    </ul>
+  <% end %>
+</div>
