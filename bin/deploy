@@ -75,10 +75,11 @@ need_cmd() {
 }
 
 resolve_compose() {
-  if command -v docker-compose >/dev/null 2>&1; then
-    echo "docker-compose"
-  elif docker compose version >/dev/null 2>&1; then
+  # 优先 Compose v2。v1（1.29）在 Recreating 时会报 ContainerConfig。
+  if docker compose version >/dev/null 2>&1; then
     echo "docker compose"
+  elif command -v docker-compose >/dev/null 2>&1; then
+    echo "docker-compose"
   else
     die "找不到 docker-compose / docker compose"
   fi
@@ -161,13 +162,21 @@ else
   run "$COMPOSE pull"
 fi
 
-if [[ -f Makefile ]] && grep -qE '^restart:' Makefile; then
-  log "滚动重启（make restart，不停 Postgres/Redis）"
-  run "make restart"
-else
-  log "滚动重启容器"
-  run "$COMPOSE up -d --force-recreate --no-deps app worker web"
-fi
+restart_app() {
+  # 不要 make restart：它会 Recreating app_backup，compose 1.29 会报 ContainerConfig。
+  # 不要 stop-all / down -v：会动到 Postgres 数据卷。
+  log "重启 app/worker/web（保留数据库，先删应用容器再创建）"
+  if [[ "$DRY_RUN" -eq 1 ]]; then
+    echo "[dry-run] $COMPOSE stop/rm app app_backup worker web && $COMPOSE up -d app worker web"
+    return 0
+  fi
+  $COMPOSE stop app app_backup worker web >/dev/null 2>&1 || true
+  $COMPOSE rm -f app app_backup worker web >/dev/null 2>&1 || true
+  docker rm -f homeland_app homeland_app_backup homeland_worker homeland_web >/dev/null 2>&1 || true
+  $COMPOSE up -d app worker web
+}
+
+restart_app
 
 wait_for_app() {
   [[ "$DRY_RUN" -eq 1 ]] && return 0
