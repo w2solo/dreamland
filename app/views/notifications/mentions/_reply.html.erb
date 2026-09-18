@@ -1,6 +1,6 @@
 <%
   reply = notification.target
-  topic = notification.second_target || reply.topic
+  topic = notification.second_target || reply&.topic
 %>
 <% if topic.blank? %>
   <div class="media-body"><%= t("notifications.source_deleted") %></div>

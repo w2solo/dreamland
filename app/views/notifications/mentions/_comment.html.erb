@@ -2,7 +2,7 @@
   comment = notification.target
   second_target = notification.second_target
 %>
-<% if second_target.blank? %>
+<% if comment.blank? || second_target.blank? %>
   <div class="media-body"><%= t("notifications.source_deleted") %></div>
 <% else %>
   <%

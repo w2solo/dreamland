@@ -169,4 +169,22 @@ module ApplicationHelper
   def user_theme
     current_user&.theme || "auto"
   end
+
+  def render_notification(notification)
+    name = notification.notify_type.to_s.underscore
+    if name.blank? || !lookup_context.template_exists?(name, ["notifications"], true)
+      return t("notifications.source_deleted")
+    end
+
+    render partial: "/notifications/#{name}", locals: {notification: notification}
+  end
+
+  def render_mention_notification(notification)
+    name = notification.target_type.to_s.underscore
+    if name.blank? || !lookup_context.template_exists?(name, ["notifications/mentions"], true)
+      return t("notifications.source_deleted")
+    end
+
+    render partial: "notifications/mentions/#{name}", locals: {notification: notification}
+  end
 end
