@@ -1,0 +1,197 @@
+#!/usr/bin/env bash
+# 生产部署（Homeland Docker）：更新镜像 → 滚动重启 app/worker/web → 自动 migrate → 回填作品。
+#
+# 不要用：docker-compose pull && make stop-all && make restart
+# stop-all 会停掉 Postgres/Redis，整站中断；官方 pull 的是 homeland/homeland，不含本仓库代码。
+#
+# 用法（在服务器上，建议 sudo）：
+#   ./bin/deploy
+#   ./bin/deploy --git-pull --backfill
+#   ./bin/deploy --pull              # 仅当镜像仓库里已经是你们 build 过的 dreamland 镜像
+#
+# 环境变量：
+#   HOMELAND_DOCKER_DIR  默认自动探测 ~/homeland-docker、/opt/homeland-docker
+#   SOURCE_DIR           默认本仓库根目录（有 Dockerfile 时）
+#   IMAGE_NAME           默认 homeland/homeland
+#   IMAGE_TAG            默认读 compose 的 IMAGE_VERSION，否则 latest
+set -euo pipefail
+
+usage() {
+  cat <<'EOF'
+用法: bin/deploy [选项]
+
+  --build         从 SOURCE_DIR 构建镜像（默认，本 fork 必须走这条）
+  --pull          docker-compose pull，不本地 build（镜像必须已是 dreamland）
+  --git-pull      构建前 git pull SOURCE_DIR
+  --backfill      重启后执行 products:backfill（幂等，首次上线必做）
+  --skip-backfill 跳过回填
+  --dry-run       只打印将执行的命令
+  -h, --help      显示帮助
+
+示例:
+  sudo HOMELAND_DOCKER_DIR=/opt/homeland-docker ./bin/deploy --git-pull --backfill
+EOF
+}
+
+MODE="build"
+GIT_PULL=0
+BACKFILL=1
+DRY_RUN=0
+
+while [[ $# -gt 0 ]]; do
+  case "$1" in
+    --build) MODE="build" ;;
+    --pull) MODE="pull" ;;
+    --git-pull) GIT_PULL=1 ;;
+    --backfill) BACKFILL=1 ;;
+    --skip-backfill) BACKFILL=0 ;;
+    --dry-run) DRY_RUN=1 ;;
+    -h|--help) usage; exit 0 ;;
+    *)
+      echo "未知参数: $1" >&2
+      usage
+      exit 1
+      ;;
+  esac
+  shift
+done
+
+log() { printf '\n==> %s\n' "$*"; }
+die() { printf '错误: %s\n' "$*" >&2; exit 1; }
+
+run() {
+  if [[ "$DRY_RUN" -eq 1 ]]; then
+    printf '[dry-run] %s\n' "$*"
+    return 0
+  fi
+  eval "$@"
+}
+
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+REPO_ROOT="$(cd "$SCRIPT_DIR/.." && pwd)"
+
+need_cmd() {
+  command -v "$1" >/dev/null 2>&1 || die "找不到命令: $1"
+}
+
+resolve_compose() {
+  if command -v docker-compose >/dev/null 2>&1; then
+    echo "docker-compose"
+  elif docker compose version >/dev/null 2>&1; then
+    echo "docker compose"
+  else
+    die "找不到 docker-compose / docker compose"
+  fi
+}
+
+find_docker_dir() {
+  local candidates=()
+  [[ -n "${HOMELAND_DOCKER_DIR:-}" ]] && candidates+=("$HOMELAND_DOCKER_DIR")
+  candidates+=(
+    "$PWD"
+    "$HOME/homeland-docker"
+    "/opt/homeland-docker"
+    "/home/app/homeland-docker"
+    "$REPO_ROOT/../homeland-docker"
+  )
+
+  local dir
+  for dir in "${candidates[@]}"; do
+    [[ -d "$dir" ]] || continue
+    if [[ -f "$dir/docker-compose.yml" ]] && grep -qE '^(restart|stop-all|update):' "$dir/Makefile" 2>/dev/null; then
+      echo "$dir"
+      return 0
+    fi
+    if [[ -f "$dir/docker-compose.yml" ]] && grep -q 'homeland' "$dir/docker-compose.yml"; then
+      echo "$dir"
+      return 0
+    fi
+  done
+  return 1
+}
+
+read_image_tag() {
+  local dir="$1"
+  local tag="${IMAGE_TAG:-}"
+  if [[ -z "$tag" && -f "$dir/app.local.env" ]]; then
+    tag="$(grep -E '^IMAGE_VERSION=' "$dir/app.local.env" | tail -n1 | cut -d= -f2- | tr -d '"[:space:]' || true)"
+  fi
+  if [[ -z "$tag" ]]; then
+    tag="$(grep -E 'image:.*homeland' "$dir/docker-compose.yml" | head -n1 | sed -E 's/.*:([A-Za-z0-9._-]+)\s*$/\1/' || true)"
+  fi
+  [[ -n "$tag" ]] || tag="latest"
+  echo "$tag"
+}
+
+DOCKER_DIR="$(find_docker_dir)" || die "找不到 homeland-docker 目录。请设置 HOMELAND_DOCKER_DIR，例如:
+  sudo HOMELAND_DOCKER_DIR=/path/to/homeland-docker $0 --backfill"
+
+SOURCE_DIR="${SOURCE_DIR:-$REPO_ROOT}"
+IMAGE_NAME="${IMAGE_NAME:-homeland/homeland}"
+IMAGE_TAG="$(read_image_tag "$DOCKER_DIR")"
+COMPOSE="$(resolve_compose)"
+IMAGE_REF="${IMAGE_NAME}:${IMAGE_TAG}"
+
+need_cmd docker
+need_cmd git
+
+if ! docker info >/dev/null 2>&1; then
+  die "当前用户无法访问 Docker，请用 sudo 运行，或把用户加入 docker 组"
+fi
+
+cd "$DOCKER_DIR"
+
+log "部署目录: $DOCKER_DIR"
+log "镜像: $IMAGE_REF"
+log "模式: $MODE  backfill=$BACKFILL  git-pull=$GIT_PULL"
+
+if [[ "$MODE" == "build" ]]; then
+  [[ -f "$SOURCE_DIR/Dockerfile" ]] || die "SOURCE_DIR 没有 Dockerfile: $SOURCE_DIR"
+  if [[ "$GIT_PULL" -eq 1 ]]; then
+    log "更新源码 $SOURCE_DIR"
+    run "git -C $(printf '%q' "$SOURCE_DIR") pull --ff-only"
+  fi
+  log "构建镜像 $IMAGE_REF"
+  run "docker build -t $(printf '%q' "$IMAGE_REF") $(printf '%q' "$SOURCE_DIR")"
+  if [[ "$IMAGE_TAG" != "latest" ]]; then
+    run "docker tag $(printf '%q' "$IMAGE_REF") $(printf '%q' "${IMAGE_NAME}:latest")"
+  fi
+else
+  log "拉取镜像（请确认仓库里已是 dreamland，而不是官方 Homeland）"
+  run "$COMPOSE pull"
+fi
+
+if [[ -f Makefile ]] && grep -qE '^restart:' Makefile; then
+  log "滚动重启（make restart，不停 Postgres/Redis）"
+  run "make restart"
+else
+  log "滚动重启容器"
+  run "$COMPOSE up -d --force-recreate --no-deps app worker web"
+fi
+
+wait_for_app() {
+  [[ "$DRY_RUN" -eq 1 ]] && return 0
+  local i
+  log "等待 app 完成 db:migrate 并就绪"
+  for i in $(seq 1 36); do
+    if $COMPOSE exec -T app bundle exec rails runner 'exit(defined?(Product) && Product.table_exists? ? 0 : 1)' >/dev/null 2>&1; then
+      return 0
+    fi
+    sleep 5
+  done
+  die "app 未在 3 分钟内就绪，请检查: $COMPOSE logs --tail=100 app"
+}
+
+wait_for_app
+
+if [[ "$BACKFILL" -eq 1 ]]; then
+  log "回填存量作品 products:backfill"
+  run "$COMPOSE run --rm app bundle exec rails products:backfill"
+fi
+
+log "当前容器"
+run "$COMPOSE ps"
+
+log "部署完成。migrate 已由 bin/docker-start 在 app 启动时执行。"
+echo "抽查: 首页本周新品、/products、个人页作品档案、/weekly"
+echo "回滚: 在 $DOCKER_DIR 执行 make rollback（若有）或切回上一镜像 tag 后 make restart"
