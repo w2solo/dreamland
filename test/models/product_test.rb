@@ -81,6 +81,22 @@ class ProductTest < ActiveSupport::TestCase
     assert_equal 1, Product.backfill_from_node!
   end
 
+  test "destroying a topic also destroys its product" do
+    product = create(:product, user: @user)
+    product.topic.destroy
+    refute Product.exists?(product.id)
+  end
+
+  test "orphaned includes products whose topics were deleted" do
+    visible = create(:product, user: @user)
+    hidden = create(:product, user: @user)
+    hidden.topic.update_columns(deleted_at: Time.current)
+
+    ids = Product.orphaned.map(&:id)
+    assert_includes ids, hidden.id
+    refute_includes ids, visible.id
+  end
+
   test "this_week excludes products whose topics were deleted" do
     visible = create(:product, user: @user, name: "Visible Ship")
     hidden = create(:product, user: @user, name: "Deleted Ship")

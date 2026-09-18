@@ -41,6 +41,7 @@ class Topic
     end
 
     def destroy
+      Product.where(topic_id: id).find_each(&:destroy)
       super
       delete_notification_mentions
     end

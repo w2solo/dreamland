@@ -32,6 +32,8 @@ class Product < ApplicationRecord
     where.not(topic_id: nil)
       .where(topic_id: Topic.without_ban.select(:id))
   }
+  # topic_id 还在，但主题已被软删或物理删除
+  scope :orphaned, -> { where.not(topic_id: nil).left_joins(:topic).where(topics: {id: nil}) }
   scope :by_launch, -> { order(Arel.sql("#{table_name}.launched_at DESC NULLS LAST, #{table_name}.id DESC")) }
 
   def self.this_week
