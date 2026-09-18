@@ -21,7 +21,6 @@ class TopicsController < ApplicationController
       @read_topic_ids = current_user.filter_readed_topics(@topics + @suggest_topics)
     end
     @weekly_products = Product.this_week.includes(:user, :topic).limit(6)
-    @sidebar_products = Product.launched.includes(:user, :topic).by_launch.limit(5)
   end
 
   def feed

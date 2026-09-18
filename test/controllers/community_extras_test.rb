@@ -50,6 +50,17 @@ describe TopicsController do
       assert_includes response.body, 'tb="edit-topic"'
     end
   end
+
+  describe "GET /topics" do
+    it "renders weekly products as compact cards" do
+      product = create(:product, user: user)
+      get topics_path
+      assert_equal 200, response.status
+      assert_includes response.body, "product-card-compact"
+      assert_includes response.body, product.name
+      refute_includes response.body, "sidebar-products"
+    end
+  end
 end
 
 describe SettingsController do

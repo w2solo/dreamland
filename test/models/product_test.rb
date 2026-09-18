@@ -62,4 +62,31 @@ class ProductTest < ActiveSupport::TestCase
     assert_equal "https://old.example/app", product.url
     assert_equal 0, Product.backfill_from_node!
   end
+
+  test "first_image_url prefers markdown image over product link" do
+    body = "Try https://old.example/app please\n\n![cover](https://cdn.example/shot.png)"
+    assert_equal "https://cdn.example/shot.png", Product.first_image_url(body)
+  end
+
+  test "name_initial skips leading punctuation" do
+    product = build(:product, name: "[完全免费] Reddit tool")
+    assert_equal "完", product.name_initial
+  end
+
+  test "backfill assigns remote cover from first topic image" do
+    node = Node.find_builtin_node(9, "我的作品")
+    Setting.stubs(:product_node_id).returns(node.id)
+    create(:topic, user: @user, node: node, title: "Ship", body: "Go https://ship.example\n![shot](https://cdn.example/shot.png)")
+    Product.any_instance.expects(:remote_cover_url=).with("https://cdn.example/shot.png")
+    assert_equal 1, Product.backfill_from_node!
+  end
+
+  test "backfill fills cover on existing products without cover" do
+    node = Node.find_builtin_node(9, "我的作品")
+    Setting.stubs(:product_node_id).returns(node.id)
+    topic = create(:topic, user: @user, node: node, title: "Old Ship", body: "https://old.example/app ![x](https://cdn.example/a.png)")
+    create(:product, user: @user, topic: topic, cover: nil)
+    Product.any_instance.expects(:remote_cover_url=).with("https://cdn.example/a.png")
+    assert_equal 0, Product.backfill_from_node!
+  end
 end

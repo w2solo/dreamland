@@ -1,6 +1,6 @@
-<% cache([product, product.user, variant]) do %>
-  <article class="product-card product-card-<%= variant %>">
-    <%= link_to product.path, class: "product-card-cover", title: product.name do %>
+<% cache([product, product.user, variant, product.cover.present?]) do %>
+  <article class="product-card product-card-<%= variant %><%= " without-cover" unless product.cover.present? %>">
+    <%= link_to product.path, class: "product-card-cover#{' is-fallback' unless product.cover.present?}", title: product.name do %>
       <% if product.cover.present? %>
         <span class="product-card-cover-image" style="background-image: url(<%= product.cover.url(:large) %>)"></span>
       <% else %>

@@ -1,5 +1,5 @@
 <div class="product-hero">
-  <div class="product-hero-cover">
+  <div class="product-hero-cover<%= " is-fallback" unless product.cover.present? %>">
     <% if product.cover.present? %>
       <span class="product-card-cover-image" style="background-image: url(<%= product.cover.url(:large) %>)"></span>
     <% else %>

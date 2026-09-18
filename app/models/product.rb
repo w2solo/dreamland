@@ -2,6 +2,10 @@
 
 class Product < ApplicationRecord
   URL_REGEXP = %r{\Ahttps?://.+}i.freeze
+  IMAGE_URL_REGEXP = %r{\.(?:png|jpe?g|gif|webp)(?:\?.*)?\z}i.freeze
+  MARKDOWN_IMAGE_REGEXP = %r{!\[[^\]]*\]\((https?://[^)\s]+)\)}i.freeze
+  HTML_IMAGE_REGEXP = %r{<img[^>]+src=["'](https?://[^"']+)["']}i.freeze
+  BARE_URL_REGEXP = %r{https?://[^\s)\]>'"]+}i.freeze
 
   belongs_to :user, required: true
   belongs_to :topic, optional: true, touch: true
@@ -43,21 +47,44 @@ class Product < ApplicationRecord
     created = 0
 
     Topic.unscoped.where(node_id: node.id, deleted_at: nil).find_each do |topic|
-      next if exists?(topic_id: topic.id)
       next if topic.user_id.blank?
+
+      if (existing = find_by(topic_id: topic.id))
+        if existing.cover.blank?
+          existing.assign_cover_from_body(topic.body)
+          existing.save
+        end
+        next
+      end
 
       product = new(
         user_id: topic.user_id,
         topic_id: topic.id,
         name: topic.title.to_s.truncate(40, omission: ""),
-        url: topic.body.to_s[url_regexp],
+        url: topic.body.to_s.scan(url_regexp).find { |candidate| !image_url?(candidate) },
         status: :shipped,
         launched_at: topic.created_at
       )
+      product.assign_cover_from_body(topic.body)
       created += 1 if product.save
     end
 
     created
+  end
+
+  def self.first_image_url(body)
+    text = body.to_s
+    markdown_url = text[MARKDOWN_IMAGE_REGEXP, 1]
+    return markdown_url if image_url?(markdown_url)
+
+    html_url = text[HTML_IMAGE_REGEXP, 1]
+    return html_url if image_url?(html_url)
+
+    text.scan(BARE_URL_REGEXP).find { |url| image_url?(url) }
+  end
+
+  def self.image_url?(url)
+    url.present? && url.match?(IMAGE_URL_REGEXP)
   end
 
   def visit_url?
@@ -65,7 +92,18 @@ class Product < ApplicationRecord
   end
 
   def name_initial
-    name.to_s.strip[0]
+    name.to_s.gsub(/[\p{P}\p{S}]+/, "").chars.find { |char| char.match?(/[\p{L}\p{N}]/) } || name.to_s.strip[0]
+  end
+
+  def assign_cover_from_body(body)
+    return if cover.present?
+
+    image_url = self.class.first_image_url(body)
+    return if image_url.blank?
+
+    self.remote_cover_url = image_url
+  rescue StandardError
+    self.remote_cover_url = nil
   end
 
   def cover_required?
