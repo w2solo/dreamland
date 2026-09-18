@@ -6,7 +6,9 @@
     <div class="infos media-body">
       <div class="title media-heading">
         <%= link_to(main_app.topic_path(topic), title: topic.title) do %>
-          <span class="node"><%= topic.node&.name %></span>
+          <% if topic.node&.name.present? %>
+            <span class="node" data-node="<%= topic.node.name %>"><%= topic.node.name %></span>
+          <% end %>
           <%= topic.title %>
         <% end %>
         <%= icon_tag("pin") if type == "suggest" %>

@@ -360,6 +360,22 @@ body {
   }
 }
 
+.btn-primary {
+  background-color: var(--brand);
+  border-color: var(--brand);
+  color: #fff !important;
+
+  &:hover,
+  &:focus,
+  &:not(:disabled):not(.disabled):active,
+  &:not(:disabled):not(.disabled).active {
+    background-color: var(--brand-hover);
+    border-color: var(--brand-hover);
+    color: #fff !important;
+    box-shadow: none;
+  }
+}
+
 .btn-default {
   border-color: var(--btn-default-border-color);
   background: var(--btn-default-background-color);
@@ -554,7 +570,7 @@ input[type="file"] {
   li.active > a:hover {
     @extend .btn-primary;
     color: #fff !important;
-    border-color: var(--blue) !important;
+    border-color: var(--brand) !important;
   }
 }
 
@@ -632,10 +648,9 @@ kbd {
 
 .card {
   margin-bottom: 25px;
-  border-top: 0;
-  box-shadow: 0 0 0;
   box-shadow: var(--card-box-shadow);
-  border: 0;
+  border: 1px solid var(--card-border-color);
+  border-radius: var(--card-border-radius);
   background: var(--card-background-color);
 
   .card-header {

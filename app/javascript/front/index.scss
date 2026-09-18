@@ -212,29 +212,38 @@ hr {
   }
 
   .filter {
+    padding: 4px 0;
+
     & > li {
-      margin-right: 0px;
+      margin-right: 4px;
       &.active {
         a:link,
         a:visited,
         a:hover {
           color: var(--filter-active-color);
+          background: var(--brand-soft) !important;
           text-decoration: none;
+          font-weight: 600;
         }
       }
       & > a {
         background: transparent !important;
-        border-radius: 0px;
+        border-radius: 999px;
         line-height: 100%;
-        padding: 8px 8px;
-        margin-right: 5px;
+        padding: 8px 12px;
+        margin-right: 2px;
         font-size: 14px;
         text-decoration: none;
         display: inline-block;
         color: var(--filter-color);
 
+        &:hover {
+          color: var(--filter-active-color);
+          background: var(--brand-soft) !important;
+        }
+
         &.all-nodes {
-          border-radius: 3px;
+          border-radius: 999px;
           outline: 0 !important;
           margin-right: 1.25rem;
           background: var(--gray);
@@ -278,6 +287,8 @@ hr {
 }
 
 .topics {
+  overflow: hidden;
+
   .card-body {
     padding-top: 0;
     padding-bottom: 0;
@@ -295,14 +306,14 @@ hr {
   .topics-group:first-child {
     @media (max-width: 991px) {
       .topic:last-child {
-        border-bottom: 1px solid #f0f0f0;
+        border-bottom: 1px solid var(--topic-item-border-color);
       }
     }
   }
   .topic {
-    min-height: 68px;
+    min-height: 72px;
     border-bottom: 1px solid var(--topic-item-border-color);
-    padding: 15px 25px;
+    padding: 16px 25px;
 
     @media (max-width: 480px) {
       padding: 15px;
@@ -318,36 +329,63 @@ hr {
       border-bottom: 0px;
     }
     .avatar {
-      padding-top: 6px;
+      padding-top: 4px;
       margin-right: 15px;
+      img {
+        background: var(--avatar-fallback-bg);
+        box-shadow: 0 0 0 1px var(--card-border-color);
+      }
     }
     .title {
-      font-size: 15px;
-      margin-bottom: 0;
+      font-size: 16px;
+      margin-bottom: 2px;
       a:link,
       a:visited {
         color: var(--link-color);
-        font-weight: 400;
-        line-height: 30px;
+        font-weight: 500;
+        line-height: 28px;
         word-break: break-all;
         .node {
-          color: var(--secondary);
-          margin-right: 3px;
+          display: inline-block;
+          vertical-align: middle;
+          color: var(--node-pill-fg) !important;
+          background: var(--node-pill-bg);
+          font-size: 12px;
+          font-weight: 500;
+          line-height: 18px;
+          padding: 1px 8px;
+          margin-right: 8px;
+          border-radius: 999px;
+        }
+        .node[data-node="我的作品"],
+        .node[data-node="新品发布"] {
+          background: var(--node-pill-product-bg);
+          color: var(--node-pill-product-fg) !important;
+        }
+        .node[data-node="开源"] {
+          background: var(--node-pill-open-bg);
+          color: var(--node-pill-open-fg) !important;
+        }
+        .node[data-node="聊天讨论"],
+        .node[data-node="自我介绍"] {
+          background: var(--node-pill-talk-bg);
+          color: var(--node-pill-talk-fg) !important;
         }
       }
       a:active,
       a:hover {
         text-decoration: none;
+        color: var(--brand);
       }
       i.fa {
         color: var(--secondary);
         margin-left: 3px;
       }
       i.fa-pin {
-        color: var(--primary);
+        color: var(--brand);
       }
       i.fa-award {
-        color: var(--red);
+        color: var(--brand);
       }
       i.fa-check-circle {
         color: var(--green);
@@ -355,13 +393,15 @@ hr {
     }
 
     .info {
-      color: #adaaa8;
+      color: var(--text-color2);
       font-size: 13px;
       margin-top: 0;
       a {
-        color: #797776;
-        text-decoration: underline;
-        text-decoration-color: #4a4a4a5e;
+        color: var(--text-color1);
+        text-decoration: none;
+      }
+      a:hover {
+        color: var(--brand);
       }
     }
 
@@ -373,8 +413,9 @@ hr {
       a:hover,
       a:visited {
         line-height: 11px;
-        color: var(--secondary);
+        color: var(--brand);
         font-size: 13px;
+        font-weight: 600;
         min-width: 32px;
         text-align: center;
         border-radius: 80px;
@@ -384,14 +425,17 @@ hr {
       }
 
       a:link {
-        background: rgba(79, 147, 248, 0.24);
+        background: var(--brand-soft);
+        color: var(--brand);
       }
       a:hover {
-        background: var(--gray);
+        background: var(--brand);
+        color: #fff;
       }
       a.state-true,
       a:visited {
         background: var(--gray);
+        color: var(--text-color2);
       }
     }
   }
@@ -814,6 +858,35 @@ hr {
 
   .card-body {
     word-break: break-all;
+  }
+
+  .sidebar-cta {
+    box-shadow: 0 8px 24px var(--brand-soft);
+
+    .card-body {
+      padding: 16px 18px;
+    }
+
+    .btn-primary {
+      font-weight: 600;
+      letter-spacing: 0.02em;
+      padding: 10px 12px;
+    }
+  }
+
+  .sidebar-tips .card-header,
+  .sidebar-stats .card-header {
+    font-size: 14px;
+    color: var(--text-color2);
+    padding-bottom: 8px;
+  }
+
+  .sidebar-stats {
+    .list-group-item {
+      color: var(--text-color1);
+      font-size: 13px;
+      background: transparent;
+    }
   }
 }
 

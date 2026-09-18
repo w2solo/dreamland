@@ -4,15 +4,18 @@ $green: #19a302;
 $yellow: #fee209;
 
 :root {
-  --primary: #404040 !important;
-  --text-color: #333;
-  --text-color1: #666;
-  --text-color2: #999;
-  --text-color3: #bbb;
-  --link-color: #222;
-  --default: #e0e0e0;
-  --secondary: #666;
-  --gray: #f2f2f2;
+  --brand: #eb5424;
+  --brand-hover: #d4481c;
+  --brand-soft: rgba(235, 84, 36, 0.12);
+  --primary: #2a211c !important;
+  --text-color: #2a211c;
+  --text-color1: #5c4f47;
+  --text-color2: #8a7b72;
+  --text-color3: #b5a79e;
+  --link-color: #2a211c;
+  --default: #e8ddd4;
+  --secondary: #6e5f56;
+  --gray: #f4ebe4;
   --red: #eb5424;
   --red-light: #fdf1ed;
   --yellow: #fee209;
@@ -22,10 +25,20 @@ $yellow: #fee209;
   --green: #19a302;
   --green-light: #f4fff2;
 
-  --divider-color: rgba(0, 0, 0, 0.1);
+  --divider-color: rgba(42, 33, 28, 0.08);
 
-  --filter-color: #808080;
-  --filter-active-color: #202020;
+  --filter-color: #6e5f56;
+  --filter-active-color: #eb5424;
+
+  --node-pill-bg: #f4ebe4;
+  --node-pill-fg: #6e5f56;
+  --node-pill-product-bg: rgba(235, 84, 36, 0.14);
+  --node-pill-product-fg: #c43c14;
+  --node-pill-talk-bg: #efe8e1;
+  --node-pill-talk-fg: #6e5f56;
+  --node-pill-open-bg: rgba(25, 163, 2, 0.12);
+  --node-pill-open-fg: #147a02;
+  --avatar-fallback-bg: #f4ebe4;
 
   // speical vars
   --btn-border-radius: 0.375rem;
@@ -48,30 +61,31 @@ $yellow: #fee209;
   --input-group-background-color: rgba(249, 250, 251);
   --input-group-border-color: rgba(209, 213, 219);
 
-  --body-background-color: #f5f6f9;
+  --body-background-color: #f7f1ea;
 
-  --navbar-background-color: #fff;
-  --navbar-text-color: #404040;
-  --navbar-shadow-color: rgba(0, 0, 0, 0.06);
-  --navbar-fixed-shadow-color: rgba(0, 0, 0, 0.09);
-  --navbar-item-link-active-background-color: #f2f2f2;
+  --navbar-background-color: #fffaf6;
+  --navbar-text-color: #2a211c;
+  --navbar-shadow-color: rgba(42, 33, 28, 0.06);
+  --navbar-fixed-shadow-color: rgba(42, 33, 28, 0.1);
+  --navbar-item-link-active-background-color: #f4ebe4;
   --navbar-item-active-text-color: #eb5424;
 
-  --navbar-topic-title-background-color: #fff;
+  --navbar-topic-title-background-color: #fffaf6;
 
-  --navbar-brand-text-color: #666;
-  --navbar-brand-text-strong-color: #2275da;
+  --navbar-brand-text-color: #2a211c;
+  --navbar-brand-text-strong-color: #eb5424;
 
   --navbar-dropdown-show-background-color: rgba(0, 0, 0, 0.04);
 
-  --sub-navbar-background-color: #fff;
-  --sub-navbar-shadow-color: rgba(0, 0, 0, 0.02);
+  --sub-navbar-background-color: #fffaf6;
+  --sub-navbar-shadow-color: rgba(42, 33, 28, 0.04);
 
-  --card-box-shadow: 0 1px 3px 0 rgb(0 0 0 / 0.04),
-    0 1px 2px 0 rgba(0, 0, 0, 0.03);
-  --card-border-color: hsla(210, 8%, 51%, 0.09);
+  --card-box-shadow: 0 1px 2px rgba(42, 33, 28, 0.04),
+    0 8px 24px rgba(42, 33, 28, 0.04);
+  --card-border-color: rgba(42, 33, 28, 0.08);
+  --card-border-radius: 12px;
   --card-background-color: #fff;
-  --card-title-secondary-color: #777;
+  --card-title-secondary-color: #8a7b72;
 
   --dropdown-menu-background-color: #fff;
   --dropdown-menu-border-color: #e5e7eb;
@@ -90,8 +104,8 @@ $yellow: #fee209;
 
   --table-border-color: #e0e0e0;
 
-  --topic-item-border-color: #f0f0f0a3;
-  --topic-item-hover-background-color: #f9f9f9;
+  --topic-item-border-color: rgba(42, 33, 28, 0.06);
+  --topic-item-hover-background-color: #faf4ee;
 
   --label-awesome-background-color: #ffcc8b24;
   --label-awesome-link-color: #adaaa8;
@@ -104,12 +118,12 @@ $yellow: #fee209;
   --scrollbar-thumb-color: rgb(41, 36, 36);
   --scrollbar-track-color: #e5e5e5;
 
-  --nav-pills-active-background-color: #2275da;
+  --nav-pills-active-background-color: #eb5424;
   --nav-pills-active-text-color: #fff;
 }
 
 $spacer: 15px;
-$font-size-base: 0.875rem;
+$font-size-base: 0.9375rem;
 $font-family-sans-serif: Helvetica, Arial, "PingFang SC", "Noto Sans", Roboto,
   "Microsoft Yahei", sans-serif;
 

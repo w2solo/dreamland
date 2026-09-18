@@ -16,7 +16,7 @@
           <%= sanitize_markdown node.summary_html %>
         </div>
       <% else %>
-        <ul class="filter nav nav-pills">
+        <ul class="filter nav nav-pills maker-filters">
           <li class="<%= ' active' if action_name == 'index' %>">
             <a href="<%= main_app.topics_path %>" data-turbolinks-action="replace"><%= t("topics.topic_list.latest") %></a>
           </li>

@@ -1,27 +1,39 @@
 :root[data-theme="dark"] {
-  --primary: #b3b3b3 !important;
-  --text-color: #e0e0e0;
-  --text-color1: #bbb;
-  --text-color2: #999;
-  --text-color3: #666;
-  --link-color: #222;
-  --default: #333;
-  --gray: #5d637314;
-  --secondary: #6f6f6f;
-  --link-color: #eeeeeebd;
-  --red: #a0051d;
-  --red-light: #fdf1ed10;
+  --brand: #f0753a;
+  --brand-hover: #ff8a54;
+  --brand-soft: rgba(240, 117, 58, 0.16);
+  --primary: #f3e6d8 !important;
+  --text-color: #f3e6d8;
+  --text-color1: #d9cbbf;
+  --text-color2: #a89486;
+  --text-color3: #7a6a60;
+  --link-color: #f3e6d8;
+  --default: #3a302b;
+  --gray: rgba(240, 117, 58, 0.08);
+  --secondary: #a89486;
+  --red: #f0753a;
+  --red-light: rgba(240, 117, 58, 0.12);
   --yellow: #fee209;
   --yellow-light: #fffdee10;
-  --blue: #2275daaa;
+  --blue: #6ea6f0;
   --blue-light: #e6f0fb10;
-  --green: #19a302aa;
+  --green: #5ec45a;
   --green-light: #f4fff210;
 
-  --divider-color: rgba(255, 255, 255, 0.1);
+  --divider-color: rgba(243, 230, 216, 0.08);
 
-  --filter-color: #6f6f6f;
-  --filter-active-color: #bb0b0b0;
+  --filter-color: #a89486;
+  --filter-active-color: #f0753a;
+
+  --node-pill-bg: rgba(243, 230, 216, 0.08);
+  --node-pill-fg: #d9cbbf;
+  --node-pill-product-bg: rgba(240, 117, 58, 0.18);
+  --node-pill-product-fg: #ffb08a;
+  --node-pill-talk-bg: rgba(243, 230, 216, 0.06);
+  --node-pill-talk-fg: #a89486;
+  --node-pill-open-bg: rgba(94, 196, 90, 0.16);
+  --node-pill-open-fg: #8ed98b;
+  --avatar-fallback-bg: #2a211c;
 
   --btn-default-text-color: #c7c7c7;
   --btn-default-background-color: #3d3d3d99;
@@ -39,42 +51,43 @@
   --input-group-background-color: #1a1a1f;
   --input-group-border-color: #3d3d3d3b;
 
-  --body-background-color: #000;
+  --body-background-color: #16110e;
 
-  --navbar-background-color: #0e0e10;
-  --navbar-text-color: #a4a8bbde;
-  --navbar-shadow-color: #c3c3c526;
-  --navbar-fixed-shadow-color: rgba(144, 144, 144, 0.27);
-  --navbar-brand-text-color: #aaa;
-  --navbar-brand-text-strong-color: #1a5092;
-  --navbar-item-link-active-background-color: #151516;
+  --navbar-background-color: #1c1613;
+  --navbar-text-color: #d9cbbf;
+  --navbar-shadow-color: rgba(0, 0, 0, 0.35);
+  --navbar-fixed-shadow-color: rgba(0, 0, 0, 0.45);
+  --navbar-brand-text-color: #f3e6d8;
+  --navbar-brand-text-strong-color: #f0753a;
+  --navbar-item-active-text-color: #f0753a;
 
-  --sub-navbar-background-color: tranparent;
-  --sub-navbar-shadow-color: #7e7e8632;
+  --sub-navbar-background-color: transparent;
+  --sub-navbar-shadow-color: rgba(243, 230, 216, 0.06);
 
-  --navbar-topic-title-background-color: #0e0e10;
+  --navbar-topic-title-background-color: #1c1613;
 
-  --card-border-color: #a3acd024;
-  --card-background-color: #dcdcff0f;
-  --card-title-secondary-color: #777;
+  --card-box-shadow: 0 1px 2px rgba(0, 0, 0, 0.28);
+  --card-border-color: rgba(243, 230, 216, 0.08);
+  --card-background-color: #211a16;
+  --card-title-secondary-color: #a89486;
 
-  --dropdown-menu-background-color: #0f0f10;
-  --dropdown-menu-border-color: rgb(41 42 47);
-  --dropdown-menu-text-color: #a9a9a9a8;
-  --dropdown-menu-divider-color: rgb(41 42 47);
+  --dropdown-menu-background-color: #1c1613;
+  --dropdown-menu-border-color: rgba(243, 230, 216, 0.1);
+  --dropdown-menu-text-color: #d9cbbf;
+  --dropdown-menu-divider-color: rgba(243, 230, 216, 0.08);
 
   --dropdown-item-active-background-color: rgba(200, 200, 200, 0.1);
   --dropdown-item-active-text-color: #fff;
 
-  --modal-background-color: #16161b;
+  --modal-background-color: #211a16;
   --modal-shadow-color: rgba(0, 0, 0, 0.39);
 
   --list-group-item-border-color: #3d3d3d99;
 
   --table-border-color: #36373ab5;
 
-  --topic-item-border-color: #a3acd024;
-  --topic-item-hover-background-color: #7a85980f;
+  --topic-item-border-color: rgba(243, 230, 216, 0.06);
+  --topic-item-hover-background-color: rgba(240, 117, 58, 0.06);
 
   --label-awesome-background-color: #f9cd940d;
 
@@ -86,7 +99,7 @@
   --scrollbar-thumb-color: #333333aa;
   --scrollbar-track-color: transparent;
 
-  --nav-pills-active-background-color: #27272da1;
+  --nav-pills-active-background-color: #f0753a;
   --nav-pills-active-text-color: #fff;
 }
 
@@ -163,7 +176,7 @@
 
   .move-page-buttons {
     .btn-move-page {
-      background: #151516;
+      background: #211a16;
     }
   }
 
