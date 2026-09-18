@@ -52,13 +52,31 @@ describe TopicsController do
   end
 
   describe "GET /topics" do
-    it "renders weekly products as compact cards" do
+    it "renders weekly products as cards" do
       product = create(:product, user: user)
       get topics_path
       assert_equal 200, response.status
-      assert_includes response.body, "product-card-compact"
+      assert_includes response.body, "product-card-card"
       assert_includes response.body, product.name
       refute_includes response.body, "sidebar-products"
+    end
+
+    it "shows at most 4 weekly products" do
+      5.times { |i| create(:product, user: user, name: "Ship #{i}") }
+      get topics_path
+      assert_equal 200, response.status
+      assert_equal 4, response.body.scan("product-card-card").size
+    end
+
+    it "does not render products whose topics were deleted" do
+      create(:product, user: user, name: "Keep Ship")
+      hidden = create(:product, user: user, name: "Gone Ship")
+      hidden.topic.update_columns(deleted_at: Time.current)
+
+      get topics_path
+      assert_equal 200, response.status
+      assert_includes response.body, "Keep Ship"
+      refute_includes response.body, "Gone Ship"
     end
   end
 end

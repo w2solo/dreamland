@@ -11,7 +11,7 @@
       <%= link_to t("products.view_all"), products_path %>
     </div>
     <div class="product-grid product-grid-strip">
-      <%= render ProductComponent.with_collection(@weekly_products, variant: "compact") %>
+      <%= render ProductComponent.with_collection(@weekly_products) %>
     </div>
   </div>
 <% end %>

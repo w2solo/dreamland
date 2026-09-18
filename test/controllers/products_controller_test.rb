@@ -19,6 +19,17 @@ describe ProductsController do
       assert_equal 200, response.status
       assert_includes response.body, product.name
     end
+
+    it "hides products whose topics were deleted" do
+      create(:product, user: user, name: "Live Ship")
+      hidden = create(:product, user: user, name: "Removed Ship")
+      hidden.topic.update_columns(deleted_at: Time.current)
+
+      get products_path
+      assert_equal 200, response.status
+      assert_includes response.body, "Live Ship"
+      refute_includes response.body, "Removed Ship"
+    end
   end
 
   describe "GET /topics/newproduct" do

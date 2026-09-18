@@ -13,7 +13,7 @@ class ProductsController < ApplicationController
     earlier = earlier.where.not(id: ids) if ids.any?
     @earlier_products = earlier.page(params[:page])
     @page_title = t("menu.products")
-    @sidebar_products = Product.this_week.includes(:user, :topic).limit(5)
+    @sidebar_products = Product.this_week.includes(:user, :topic).limit(4)
   end
 
   def show

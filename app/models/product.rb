@@ -26,8 +26,13 @@ class Product < ApplicationRecord
   validate :url_unique_for_user
   validate :check_ban_words
 
-  scope :launched, -> { where.not(topic_id: nil) }
-  scope :by_launch, -> { order(Arel.sql("launched_at DESC NULLS LAST, id DESC")) }
+  # Only products whose topic is still public. Soft-deleted topics must not appear
+  # on the homepage / 造船台 even if the Product row still has a topic_id.
+  scope :launched, -> {
+    where.not(topic_id: nil)
+      .where(topic_id: Topic.without_ban.select(:id))
+  }
+  scope :by_launch, -> { order(Arel.sql("#{table_name}.launched_at DESC NULLS LAST, #{table_name}.id DESC")) }
 
   def self.this_week
     range = Time.zone.now.beginning_of_week..Time.zone.now.end_of_week

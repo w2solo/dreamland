@@ -81,6 +81,26 @@ class ProductTest < ActiveSupport::TestCase
     assert_equal 1, Product.backfill_from_node!
   end
 
+  test "this_week excludes products whose topics were deleted" do
+    visible = create(:product, user: @user, name: "Visible Ship")
+    hidden = create(:product, user: @user, name: "Deleted Ship")
+    hidden.topic.update_columns(deleted_at: Time.current)
+
+    ids = Product.this_week.map(&:id)
+    assert_includes ids, visible.id
+    refute_includes ids, hidden.id
+  end
+
+  test "this_week excludes products whose topics were banned" do
+    visible = create(:product, user: @user, name: "Normal Ship")
+    banned = create(:product, user: @user, name: "Banned Ship")
+    banned.topic.update!(grade: :ban)
+
+    ids = Product.this_week.map(&:id)
+    assert_includes ids, visible.id
+    refute_includes ids, banned.id
+  end
+
   test "backfill fills cover on existing products without cover" do
     node = Node.find_builtin_node(9, "我的作品")
     Setting.stubs(:product_node_id).returns(node.id)

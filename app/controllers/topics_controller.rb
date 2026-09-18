@@ -20,7 +20,7 @@ class TopicsController < ApplicationController
     if current_user
       @read_topic_ids = current_user.filter_readed_topics(@topics + @suggest_topics)
     end
-    @weekly_products = Product.this_week.includes(:user, :topic).limit(6)
+    @weekly_products = Product.this_week.includes(:user, :topic).limit(4)
   end
 
   def feed

@@ -13,7 +13,7 @@ class ProductComponent < ApplicationComponent
   end
 
   def render?
-    !!@product
+    @product.present? && @product.topic.present?
   end
 
   def compact?
